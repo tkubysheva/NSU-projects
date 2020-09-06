@@ -93,6 +93,5 @@ int main() {
     B.add_number_to_array(6);
     B.print();
     C.print();
-
-
+    return 0;
 }
