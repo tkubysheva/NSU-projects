@@ -93,5 +93,6 @@ int main() {
     B.add_number_to_array(6);
     B.print();
     C.print();
+    cout << B.get_elem(B.get_size()-3);
     return 0;
 }
