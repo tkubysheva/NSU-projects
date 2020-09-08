@@ -10,6 +10,7 @@ public:
     explicit Array(const int& initial_allocated){ // конструктор с параметром
         allocated = initial_allocated;
         mem = new int[allocated];
+        assert(NULL != mem);
         for (int i = 0; i < allocated; ++i)
             mem[i] = 0;
     }
@@ -18,16 +19,18 @@ public:
         size = source.size;
         allocated = source.allocated;
         mem = new int[allocated];
+        assert(NULL != mem);
         for (int i = 0; i < allocated; ++i)
             mem[i] = source.mem[i];
     }
     Array(){ //конструктор без параметров
         allocated = 1;
         mem = new int;
+        assert(NULL != mem);
         mem[0] = 0;
     }
     ~Array(){
-        delete mem;
+        delete [] mem;
     };
     int get_size() const{
         return size;
