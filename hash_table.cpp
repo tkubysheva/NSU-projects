@@ -25,7 +25,7 @@ private:
     Value value{};
     ListOfValues *next;
 public:
-    ListOfValues(const int& k, const Value& v) {
+    ListOfValues(const Key& k, const Value& v) {
         key = k;
         value = v;
         next = nullptr;
@@ -134,7 +134,10 @@ public:
         auto *ptr = H[key];
         while(ptr -> getNext()){
             if(ptr -> getNext() -> getKey() == k){
-                
+                auto* p = ptr ->getNext();
+                ptr -> setNext(ptr ->getNext() -> getNext());
+                delete p;
+                Size--;
                 return true;
             }
             ptr = ptr -> getNext();
@@ -146,7 +149,7 @@ public:
         if(contains(k))
             return false; //если такой ключ уже существует
         const int key = hash(k);
-        auto* V = new (nothrow) ListOfValues(key, v);
+        auto* V = new (nothrow) ListOfValues(k, v);
         if(!V) return false;
         if(H[key] == nullptr){
             H[key] = V;
@@ -207,23 +210,37 @@ public:
     }
 
     friend bool operator==(const HashTable& a, const HashTable& b){
-        
+        if(a.size() != b.size()) return false;
+        for(const auto& i : a.H){
+            if(!b.contains(i->getKey())) return false;
+        }
+        return true;
     }
 
-    friend bool operator!=(const HashTable& a, const HashTable& b);
+    friend bool operator!=(const HashTable& a, const HashTable& b){
+        return !(a == b);
+    }
 };
 
 
 int main() {
     HashTable h;
     h.insert("peter", {5, 10});
-    cout << h.size() << endl;
-    h.insert("bob", {2, 7});
+    cout << h.size() << endl; //1
+
+    h.insert("bob", {2, 7}); //2
+
     if(h.insert("peter", {5, 10}))
         cout << "yes" << endl;
+    else cout << "no" << endl; //no
+    cout << h.size() << endl; //2
+
+    h.erase("peter");
+    cout << h.size() << endl; //1
+
+    if(h.insert("peter", {5, 10}))
+        cout << "yes" << endl; //yes
     else cout << "no" << endl;
-    cout << h.size() << endl;
-    h.clear();
-    cout << h.size() << endl;
+    cout << h.size() << endl; //2
     return 0;
 }
