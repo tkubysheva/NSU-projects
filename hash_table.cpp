@@ -71,24 +71,35 @@ public:
             i = nullptr;
     }
     ~HashTable(){
-        for(auto & i : H){
-            if(!i){
-                delete [] i;
-            }
-        }
+        clear();
     }
 
     HashTable(const HashTable& b){
-        for(int i = 0; i < HASHTABLESIZE; ++i){
-            H[i] = b.H[i];
+        Size = 0;
+        for(auto i : b.H){
+            if(i){
+                insert(i->getKey(), i->getValue());
+                auto* ptr = i;
+                while(ptr -> getNext()){
+                    insert(ptr-> getNext()->getKey(), ptr-> getNext()->getValue());
+                    ptr = ptr -> getNext();
+                }
+            }
         }
     }
 
 // Очищает контейнер.
     void clear(){
-        Size = 0;
-        for(auto& i : H){
-            delete [] i;
+        for(auto i : H){
+            if(i){
+                auto* ptr = i->getNext();
+                erase(i->getKey());
+                while(ptr){
+                    auto* p = ptr -> getNext();
+                    erase(ptr->getKey());
+                    ptr = p;
+                }
+            }
         }
     }
     // Обменивает значения двух хэш-таблиц.
@@ -107,7 +118,7 @@ public:
                 insert(i->getKey(), i->getValue());
                 auto* ptr = i;
                 while(ptr -> getNext()){
-                    insert(ptr->getKey(), ptr->getValue());
+                    insert(ptr-> getNext()->getKey(), ptr-> getNext()->getValue());
                     ptr = ptr -> getNext();
                 }
             }
@@ -206,13 +217,13 @@ public:
         return Size;
     }
     bool empty() const{
-        return Size;
+        return Size == 0;
     }
 
     friend bool operator==(const HashTable& a, const HashTable& b){
         if(a.size() != b.size()) return false;
         for(const auto& i : a.H){
-            if(!b.contains(i->getKey())) return false;
+            if(i && !b.contains(i->getKey())) return false;
         }
         return true;
     }
@@ -225,22 +236,48 @@ public:
 
 int main() {
     HashTable h;
-    h.insert("peter", {5, 10});
+    h.insert("peter", {15, 160});
     cout << h.size() << endl; //1
 
-    h.insert("bob", {2, 7}); //2
+    h.insert("bob", {12, 157}); //2//
+    h.insert("bbo", {9, 100}); //3//
 
-    if(h.insert("peter", {5, 10}))
+
+    if(h.insert("peter", {22, 180}))
         cout << "yes" << endl;
     else cout << "no" << endl; //no
-    cout << h.size() << endl; //2
+    cout << h.size() << endl; //3
 
     h.erase("peter");
-    cout << h.size() << endl; //1
+    cout << h.size() << endl; //2
 
-    if(h.insert("peter", {5, 10}))
+    if(h.insert("peter", {5, 60}))
         cout << "yes" << endl; //yes
     else cout << "no" << endl;
-    cout << h.size() << endl; //2
+    cout << h.size() << endl; //3
+
+    h["peter"] = {13, 140};
+    cout << "Weight: " << h.at("peter").weight << "; Age: " << h.at("peter").age << endl; //140, 13
+
+    HashTable d = h;
+    cout << (h == d) << endl; //1
+    cout << d.size() << endl; //3
+
+    d.insert("mary", {80, 155});
+    cout << (h == d) << endl; //0
+    cout << h.contains("mary") << endl; //0
+    HashTable p = h;
+    p.insert("rob", {43, 180});
+    p.insert("ben", {67, 169});
+    h.clear();
+    cout << h.empty() << endl; //1
+    cout << d.size() << endl; //4
+    cout << p.size() << endl; //5
+    p.swap(d);
+    //std::swap(p, d) дает неверные результаты для Size
+    cout << d.size() << endl; //5
+    cout << p.size() << endl; //4
+    cout << p.contains("mary") << endl; //1
+    cout << d.contains("mary") << endl; //0
     return 0;
 }
