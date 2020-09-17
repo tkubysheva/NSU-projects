@@ -2,7 +2,6 @@
 #include <algorithm>
 using namespace std;
 typedef string Key;
-#define HASHTABLESIZE 13
 
 
 struct Value {
@@ -53,33 +52,43 @@ public:
 };
 
 
-
 class HashTable{
+    static const int begin_table_size = 2; // начальный размер нашей таблицы
+    int table_size;
 private:
-    ListOfValues* H[HASHTABLESIZE]{};
+    ListOfValues** H;
     int Size = 0;
-    static int hash(const Key& k){
+    int hash(const Key& k) const{
+        const int TS = table_size;
         int p = 0;
         for(const auto& i : k){
             p += i;
         }
-        return p % HASHTABLESIZE;
+        return p % TS;
+    }
+    bool fill_factor(){
+        return double(Size)/table_size > 0.75;
     }
 public:
     HashTable(){
-        for(auto & i : H)
-            i = nullptr;
+        table_size = begin_table_size;
+        H = new ListOfValues* [table_size];
+        for(int i = 0; i < table_size; ++i)
+            H[i] = nullptr;
     }
     ~HashTable(){
         clear();
     }
 
     HashTable(const HashTable& b){
-        Size = 0;
-        for(auto i : b.H){
-            if(i){
-                insert(i->getKey(), i->getValue());
-                auto* ptr = i;
+        table_size = b.table_size;
+        H = new ListOfValues* [table_size];
+        for(int i = 0; i < table_size; ++i)
+            H[i] = nullptr;
+        for(int i = 0; i < table_size; ++i){
+            if(b.H[i]){
+                insert(b.H[i]->getKey(), b.H[i]->getValue());
+                auto* ptr = b.H[i];
                 while(ptr -> getNext()){
                     insert(ptr-> getNext()->getKey(), ptr-> getNext()->getValue());
                     ptr = ptr -> getNext();
@@ -88,12 +97,48 @@ public:
         }
     }
 
+    void resize() {
+        cout << "RESIZE" << endl;
+        int old_tsize = table_size;
+        table_size *= 2;
+        auto _H = new ListOfValues* [table_size];
+        for(int i = 0; i < table_size; ++i)
+            _H[i] = nullptr;
+        std::swap(H, _H);
+        for(int i = 0; i < old_tsize; ++i){
+            if(_H[i]){
+                cout << "1 ";
+                insert(_H[i]->getKey(), _H[i]->getValue());
+                auto* ptr = _H[i];
+                while(ptr -> getNext()){
+                    insert(ptr-> getNext()->getKey(), ptr-> getNext()->getValue());
+                    ptr = ptr -> getNext();
+                }
+            }
+        }
+        cout << endl;
+
+      /*  for(int i = 0; i < old_tsize; ++i){
+            if(_H[i]){
+                auto* ptr = _H[i]->getNext();
+                auto* p = _H[i];
+                _H[i] = _H[i]->getNext();
+                delete p;
+                while(ptr){
+                    p = ptr ->getNext();
+                    ptr -> setNext(ptr ->getNext() -> getNext());
+                    delete p;
+                }
+            }
+        }               ДОДЕЛАТЬ
+        */ 
+    }
 // Очищает контейнер.
     void clear(){
-        for(auto i : H){
-            if(i){
-                auto* ptr = i->getNext();
-                erase(i->getKey());
+        for(int i = 0; i < table_size; ++i){
+            if(H[i]){
+                auto* ptr = H[i]->getNext();
+                erase(H[i]->getKey());
                 while(ptr){
                     auto* p = ptr -> getNext();
                     erase(ptr->getKey());
@@ -113,10 +158,10 @@ public:
     HashTable& operator=(const HashTable& b){
         clear();
         Size = b.Size;
-        for(auto i : b.H){
-            if(i){
-                insert(i->getKey(), i->getValue());
-                auto* ptr = i;
+        for(int i = 0; i < table_size; ++i){
+            if(b.H[i]){
+                insert(b.H[i]->getKey(), b.H[i]->getValue());
+                auto* ptr = b.H[i];
                 while(ptr -> getNext()){
                     insert(ptr-> getNext()->getKey(), ptr-> getNext()->getValue());
                     ptr = ptr -> getNext();
@@ -125,7 +170,6 @@ public:
         }
         return *this;
     }
-
 
 
     // Удаляет элемент по заданному ключу.
@@ -157,6 +201,7 @@ public:
     }
     // Вставка в контейнер. Возвращаемое значение - успешность вставки.
     bool insert(const Key& k, const Value& v){
+        if(fill_factor()) resize();
         if(contains(k))
             return false; //если такой ключ уже существует
         const int key = hash(k);
@@ -222,8 +267,8 @@ public:
 
     friend bool operator==(const HashTable& a, const HashTable& b){
         if(a.size() != b.size()) return false;
-        for(const auto& i : a.H){
-            if(i && !b.contains(i->getKey())) return false;
+        for(int i = 0; i < a.table_size; ++i){
+            if(a.H[i] && !b.contains(a.H[i]->getKey())) return false;
         }
         return true;
     }
@@ -274,7 +319,7 @@ int main() {
     cout << d.size() << endl; //4
     cout << p.size() << endl; //5
     p.swap(d);
-    //std::swap(p, d) дает неверные результаты для Size
+    //swap(p, d) дает неверные результаты для Size
     cout << d.size() << endl; //5
     cout << p.size() << endl; //4
     cout << p.contains("mary") << endl; //1
