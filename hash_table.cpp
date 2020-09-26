@@ -93,7 +93,7 @@ public:
     auto _H = new ListOfValues *[capacity];
     std::fill(&_H[0], &_H[capacity], nullptr);
     std::swap(H, _H);
-    for(auto bpos : std::make_pair(_H, _H + capacity)){
+    for(auto bpos : std::make_pair(_H, _H + old_tsize)){
       for(; bpos; bpos = bpos -> getNext() ){
         insert(bpos->getKey(), bpos -> getValue());
       }
@@ -194,9 +194,7 @@ public:
       return true;
     }
     auto *ptr = H[key];
-    while (ptr->getNext()) {
-      ptr = ptr->getNext();
-    }
+    for (;ptr->getNext();ptr = ptr->getNext()) {}
     ptr->setNext(V);
     size_++;
     return true;
@@ -266,11 +264,19 @@ public:
   friend bool operator==(const HashTable &a, const HashTable &b) {
     if (a.size() != b.size())
       return false;
+    for(auto pos : std::make_pair(a.H, a.H + a.capacity)){
+      for(; pos; pos = pos -> getNext() ){
+        if(!b.contains(pos->getKey()))
+          return false;
+      }
+    }
+    /*
     for (int i = 0; i < a.capacity; ++i) {
       if (a.H[i]) {
         if (!b.contains(a.H[i]->getKey()))
           return false;
         auto *ptr = a.H[i];
+
         while (ptr->getNext()) {
           if (!b.contains(a.H[i]->getNext()->getKey()))
             return false;
@@ -278,6 +284,7 @@ public:
         }
       }
     }
+     */
     return true;
   }
 
@@ -292,15 +299,51 @@ private:
 };
 
 int main() {
-  HashTable h,
-  p;
-  h["key"] = {10, 765};
-  p = h;
-  std::cout << "Weight: " << h["key"].weight << "; Age: " << h["key"].age
-            << std::endl;
-  std::cout << h.size() << std::endl;
-  h.erase("key");
-  std::cout << "Weight: " << h.at("u").weight
-            << std::endl;
-  std::cout << h.size() << std::endl;
+  HashTable h;
+  h.insert("peter", {15, 160});
+  std::cout << h.size() << std::endl; // 1
+
+  h.insert("bob", {12, 157}); // 2//
+  h.insert("bbo", {9, 100});  // 3// resize 1 1
+
+  if (h.insert("peter", {22, 180}))
+    std::cout << "yes" << std::endl;
+  else
+    std::cout << "no" << std::endl;   // no
+  std::cout << h.size() << std::endl; // 3
+
+  h.erase("peter");
+  std::cout << h.size() << std::endl; // 2
+
+  if (h.insert("peter", {5, 60}))
+    std::cout << "yes" << std::endl; // yes
+  else
+    std::cout << "no" << std::endl;
+  std::cout << h.size() << std::endl; // 3
+
+  h["peter"] = {13, 140};
+  std::cout << "Weight: " << h.at("peter").weight << "; Age: " << h.at("peter").age
+       << std::endl; // 140, 13
+
+  HashTable d = h;          // d  size = 3
+  std::cout << (h == d) << std::endl; // 1
+  std::cout << d.size() << std::endl; // 3
+
+  d.insert("mary", {80, 155});
+  std::cout << (h == d) << std::endl;           // 0
+  std::cout << h.contains("mary") << std::endl; // 0
+  HashTable p = h;                    // p size = 3
+  p.insert("rob", {43, 180});         // size = 4
+  p.insert("ben", {67, 169});         // resize 1 1 1 1 // size = 5
+  h.clear();
+  std::cout << h.empty() << std::endl; // 1
+  std::cout << d.size() << std::endl;  // 4
+  std::cout << p.size() << std::endl;  // 5
+  p.swap(d);
+  // swap(p, d) дает неверные результаты для Size
+  std::cout << d.size() << std::endl;           // 5
+  std::cout << p.size() << std::endl;           // 4
+  std::cout << p.contains("mary") << std::endl; // 1
+  std::cout << d.contains("mary") << std::endl; // 0
+  return 0;
 }
