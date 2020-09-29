@@ -1,13 +1,14 @@
 #include <algorithm>
 #include <iostream>
 
-
 typedef std::string Key;
 template <typename T> T* begin(std::pair<T*, T*> const& p)
 { return p.first; }
 template <typename T> T* end(std::pair<T*, T*> const& p)
 { return p.second; }
 
+
+///////////////////////////////
 struct Value {
   unsigned age = 0;
   unsigned weight = 0;
@@ -28,8 +29,10 @@ struct Value {
 
 };
 
-class ListOfValues {
-public:
+
+//////////////////////////////////////////////////
+struct ListOfValues {
+
   ListOfValues(const Key &k, const Value &v) {
     key = k;
     value = v;
@@ -39,30 +42,22 @@ public:
     value = W.value;
   }
 
-  //????????????
   const Key& getKey() const { return key; }
   Value &getValue() { return value; }
   ListOfValues *getNext() { return next; }
   void setNext(ListOfValues *n) { next = n; }
 
-private:
   Key key;
   Value value{};
   ListOfValues *next = nullptr;
 };
 
+
+
+/////////////////////////////////////////////////////
 class HashTable {
   constexpr static int kBeginTableSize = 2;
   constexpr static int IncreaseFactor = 2;
-  int hash(const Key &k) const {
-    const int TS = capacity;
-    int p = 0;
-    for (const auto &i : k) {
-      p += i;
-    }
-    return p % TS;
-  }
-  bool is_almost_full() { return double(size_) / capacity > 0.75; }
 
 public:
   HashTable() {
@@ -85,40 +80,12 @@ public:
     }
   }
 
-  void resize() {
-    std::cout << "RESIZE" << std::endl;
-    size_ = 0;
-    int old_tsize = capacity;
-    capacity *= IncreaseFactor;
-    auto _H = new ListOfValues *[capacity];
-    std::fill(&_H[0], &_H[capacity], nullptr);
-    std::swap(H, _H);
-    for(auto bpos : std::make_pair(_H, _H + old_tsize)){
-      for(; bpos; bpos = bpos -> getNext() ){
-        insert(bpos->getKey(), bpos -> getValue());
-      }
-    }
-    std::cout << std::endl;
-    for (int i = 0; i < old_tsize; ++i) {
-      if (_H[i]) {
-        auto *ptr = _H[i]->getNext();
-        delete _H[i];
-        while (ptr) {
-          auto *p = ptr;
-          ptr = ptr->getNext();
-          delete p;
-        }
-      }
-    }
-    delete[] _H;
-  }
-
-  // Очищает контейнер.
   void clear() {
     for (int i = 0; i < capacity; ++i) {
       if (H[i]) {
         auto *ptr = H[i]->getNext();
         delete H[i];
+        H[i] = nullptr;
         while (ptr) {
           auto *p = ptr->getNext();
           delete ptr;
@@ -126,16 +93,14 @@ public:
         }
       }
     }
+    size_ = 0;
   }
-  // Обменивает значения двух хэш-таблиц.
-  // Подумайте, зачем нужен этот метод, при наличии стандартной функции
-  // std::swap.
+
   void swap(HashTable &b) {
     std::swap(size_, b.size_);
     std::swap(H, b.H);
     std::swap(capacity, b.capacity);
   }
-
 
   HashTable &operator=(const HashTable &b) {
     if (*this == b)
@@ -153,7 +118,6 @@ public:
     return *this;
   }
 
-  // Удаляет элемент по заданному ключу.
   bool erase(const Key &k) {
     const int key = hash(k);
     if (H[key] == nullptr)
@@ -180,7 +144,7 @@ public:
     }
     return false;
   }
-  // Вставка в контейнер. Возвращаемое значение - успешность вставки.
+
   bool insert(const Key &k, const Value &v) {
     if (is_almost_full())
       resize();
@@ -200,7 +164,6 @@ public:
     return true;
   }
 
-  // Проверка наличия значения по заданному ключу.
   bool contains(const Key &k) const {
     const int key = hash(k);
     if (H[key] == nullptr)
@@ -211,29 +174,16 @@ public:
           return true;
       }
     }
-    /*else {
-      if (H[key]->getKey() == k)
-        return true;
-    }
-    auto *ptr = H[key];
-    while (ptr->getNext()) {
-      if (ptr->getNext()->getKey() == k)
-        return true;
-      ptr = ptr->getNext();
-    }*/
+
     return false;
   }
 
-  // Возвращает значение по ключу. Небезопасный метод.
-  // В случае отсутствия ключа в контейнере, следует вставить в контейнер
-  // значение, созданное конструктором по умолчанию и вернуть ссылку на него.
   Value &operator[](const Key &k) {
     if (!contains(k))
       insert(k, Value());
     return at(k);
   }
 
-  // Возвращает значение по ключу. Бросает исключение при неудаче.
   Value &at(const Key &k) {
     const int key = hash(k);
     if (H[key] == nullptr){
@@ -270,21 +220,6 @@ public:
           return false;
       }
     }
-    /*
-    for (int i = 0; i < a.capacity; ++i) {
-      if (a.H[i]) {
-        if (!b.contains(a.H[i]->getKey()))
-          return false;
-        auto *ptr = a.H[i];
-
-        while (ptr->getNext()) {
-          if (!b.contains(a.H[i]->getNext()->getKey()))
-            return false;
-          ptr = ptr->getNext();
-        }
-      }
-    }
-     */
     return true;
   }
 
@@ -296,8 +231,44 @@ private:
   ListOfValues **H;
   int size_ = 0;
   int capacity = kBeginTableSize;
+
+  void resize() {
+    size_ = 0;
+    int old_tsize = capacity;
+    capacity *= IncreaseFactor;
+    auto _H = new ListOfValues *[capacity];
+    std::fill(&_H[0], &_H[capacity], nullptr);
+    std::swap(H, _H);
+    for(auto bpos : std::make_pair(_H, _H + old_tsize)){
+      for(; bpos; bpos = bpos -> getNext() ){
+        insert(bpos->getKey(), bpos -> getValue());
+      }
+    }
+    for (int i = 0; i < old_tsize; ++i) {
+      if (_H[i]) {
+        auto *ptr = _H[i]->getNext();
+        delete _H[i];
+        while (ptr) {
+          auto *p = ptr;
+          ptr = ptr->getNext();
+          delete p;
+        }
+      }
+    }
+    delete[] _H;
+  }
+  int hash(const Key &k) const {
+    const int TS = capacity;
+    int p = 0;
+    for (const auto &i : k) {
+      p += i;
+    }
+    return p % TS;
+  }
+  bool is_almost_full() { return double(size_) / capacity > 0.75; }
 };
 
+/*
 int main() {
   HashTable h;
   h.insert("peter", {15, 160});
@@ -346,4 +317,4 @@ int main() {
   std::cout << p.contains("mary") << std::endl; // 1
   std::cout << d.contains("mary") << std::endl; // 0
   return 0;
-}
+}*/
