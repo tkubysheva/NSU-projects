@@ -74,12 +74,12 @@ public:
   }
 
   void clear() {
-    for (auto pos : std::make_pair(H, H + capacity)) {
-      if (pos) {
-        auto *ptr = pos->getNext();
-        delete pos;
+    for (int i = 0; i < capacity; ++i) {
+      if (H[i]) {
+        auto *ptr = H[i]->getNext();
+        delete H[i];
         size_--;
-        pos = nullptr;
+        H[i] = nullptr;
         while (ptr) {
           auto *p = ptr->getNext();
           delete ptr;
