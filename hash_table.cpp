@@ -27,7 +27,7 @@ struct Value {
 
 //////////////////////////////////////////////////
 struct ListOfValues {
-
+public:
   ListOfValues(const Key &k, const Value &v) {
     key = k;
     value = v;
@@ -41,7 +41,7 @@ struct ListOfValues {
   Value &getValue() { return value; }
   ListOfValues *getNext() { return next; }
   void setNext(ListOfValues *n) { next = n; }
-
+private:
   Key key;
   Value value{};
   ListOfValues *next = nullptr;
