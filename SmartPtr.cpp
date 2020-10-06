@@ -23,12 +23,16 @@ struct A {
 class SmartPtr {
 public:
     SmartPtr() = default;
-    explicit SmartPtr(A* a) : a_(a), counter(1) {
+    explicit SmartPtr(A* a) : a_(a), counter(new int) {
+      *counter = 1;
     }
     ~SmartPtr(){
-        if(a_ && counter > 0) {
-            if(--counter == 0)
+        if(a_ && *counter > 0) {
+            --(*counter);
+            if(*counter == 0) {
               delete a_;
+              delete counter;
+            }
         }
     }
     A& operator*() {
@@ -52,19 +56,34 @@ public:
 
     SmartPtr(SmartPtr& p) {
         a_ = p.a_;
-        counter = ++p.counter;
+        ++(*p.counter);
+        counter = p.counter;
     }
-    SmartPtr& operator=(SmartPtr& p) {
-        if(this == &p)
-            return *this;
-        a_ = p.a_;
-        counter = ++p.counter;
+    SmartPtr &operator=(SmartPtr& p) {
+      if(this == &p)
         return *this;
+      if(a_ && *counter > 0) {
+        --(*counter);
+        if(*counter == 0) {
+          delete a_;
+          delete counter;
+        }
+      }
+      a_ = p.a_;
+      ++(*p.counter);
+      counter = p.counter;
+      return *this;
     }
 
 private:
     A* a_ = nullptr;
-    int counter = 0;
+    int* counter = nullptr;
 };
 
-
+int main() {
+  SmartPtr p1(new A);
+  SmartPtr p2(p1);
+  SmartPtr p3;
+  p3 = p1;
+  return 0;
+}
