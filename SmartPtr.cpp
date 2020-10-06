@@ -5,7 +5,6 @@ struct A {
     A() {
         cout << "Ctor" << endl;
     }
-
     A(int i) {
         cout << "Int " << i << endl;
     }
@@ -24,12 +23,12 @@ struct A {
 class SmartPtr {
 public:
     SmartPtr() = default;
-    explicit SmartPtr(A* a) : a_(a) {
+    explicit SmartPtr(A* a) : a_(a), counter(1) {
     }
     ~SmartPtr(){
-        if(!a_ && counter > 0) {
-            --counter;
-            delete a_;
+        if(a_ && counter > 0) {
+            if(--counter == 0)
+              delete a_;
         }
     }
     A& operator*() {
@@ -68,12 +67,4 @@ private:
     int counter = 0;
 };
 
-int main() {
-    SmartPtr p;
-    A tt(6), ttt;
-    ttt = tt;
-    A* t = &tt, *u = &ttt;
-    SmartPtr o(t);
-    o = p;
-    *p = *u;
-}
+
