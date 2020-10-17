@@ -6,6 +6,7 @@ class Hashtable : public ::testing::Test {
 protected:
   HashTable p, h;
 };
+
 TEST_F(Hashtable, insert_test) {
   p.insert("key", {12, 100});
   EXPECT_FALSE(p.insert("key", {12, 100}));
@@ -141,5 +142,10 @@ TEST_F(Hashtable, at_test) {
   EXPECT_EQ(h.at("a"), Value({1, 3}));
   ASSERT_ANY_THROW(h.at("bob"));
   ASSERT_ANY_THROW(h.at("b"));
+  const HashTable CONST = h;
+  EXPECT_EQ(CONST.at("key"), Value({12, 100}));
+  EXPECT_EQ(CONST.at("a"), Value({1, 3}));
+  ASSERT_ANY_THROW(CONST.at("bob"));
+  ASSERT_ANY_THROW(CONST.at("b"));
 }
 } // namespace
