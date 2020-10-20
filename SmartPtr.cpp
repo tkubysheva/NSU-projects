@@ -27,12 +27,14 @@ public:
       *counter = 1;
     }
     ~SmartPtr(){
-        if(a_ && *counter > 0) {
+        if(a_) {
+          if(*counter > 0) {
             --(*counter);
-            if(*counter == 0) {
+            if (*counter == 0) {
               delete a_;
               delete counter;
             }
+          }
         }
     }
     A& operator*() {
@@ -56,21 +58,25 @@ public:
 
     SmartPtr(SmartPtr& p) {
         a_ = p.a_;
-        ++(*p.counter);
+        if(p.counter)
+          ++(*p.counter);
         counter = p.counter;
     }
     SmartPtr &operator=(SmartPtr& p) {
       if(this == &p)
         return *this;
-      if(a_ && *counter > 0) {
-        --(*counter);
-        if(*counter == 0) {
-          delete a_;
-          delete counter;
+      if(a_) {
+        if(*counter > 0) {
+          --(*counter);
+          if (*counter == 0) {
+            delete a_;
+            delete counter;
+          }
         }
       }
       a_ = p.a_;
-      ++(*p.counter);
+      if(p.counter)
+        ++(*p.counter);
       counter = p.counter;
       return *this;
     }
@@ -84,6 +90,8 @@ int main() {
   SmartPtr p1(new A);
   SmartPtr p2(p1);
   SmartPtr p3;
+  p1 = p3;
   p3 = p1;
+  SmartPtr p4(p3);
   return 0;
 }
