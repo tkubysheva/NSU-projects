@@ -52,6 +52,7 @@ struct ListOfValues {
 class HashTable {
     constexpr static int kBeginTableSize = 2;
     constexpr static int IncreaseFactor = 2;
+    constexpr static double FillFactor = 0.75;
 
 public:
     HashTable() {//default constructor
@@ -266,5 +267,5 @@ private:
         }
         return p % TS;
     }
-    bool is_almost_full() const { return double(size_) / capacity > 0.75; }
+    bool is_almost_full() const { return double(size_) / capacity > FillFactor; }
 };
