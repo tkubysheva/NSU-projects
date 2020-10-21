@@ -11,17 +11,6 @@ T *end(std::pair<T *, T *> const &p) { return p.second; }
 struct Value {//struct for value hash_table
     unsigned age = 0;
     unsigned weight = 0;
-    Value(const Value &v) {//copy constructor
-        age = v.age;
-        weight = v.weight;
-    }
-
-    Value(int a, int b) {//constructor with parameter
-        age = a;
-        weight = b;
-    }
-    Value() = default;//default constructor
-
     friend bool operator==(const Value &a, const Value &b) {
         return a.age == b.age && a.weight == b.weight;
     }
@@ -29,20 +18,6 @@ struct Value {//struct for value hash_table
 
 //////////////////////////////////////////////////
 struct ListOfValues {
-    ListOfValues(const Key &k, const Value &v) {//constructor with parameter
-        key = k;
-        value = v;
-    }
-    ListOfValues(const ListOfValues &W) {//copy constructor
-        key = W.key;
-        value = W.value;
-    }
-/*
-    const Key &getKey() const { return key; }//the "key" field must be unavailable for editing
-    Value &getValue() { return value; }
-    ListOfValues *getNext() { return next; }
-    void setNext(ListOfValues *n) { next = n; }
-*/
     Key key;
     Value value{};
     ListOfValues *next = nullptr;
@@ -143,14 +118,14 @@ public:
         if (contains(k))
             return false;
         const int key = hash(k);
-        auto *V = new ListOfValues(k, v);
+        auto *V = new ListOfValues({k, v, nullptr});
         if (H[key] == nullptr) {//if there is no element with such a key
             H[key] = V;
             size_++;
             return true;
         }
         auto *ptr = H[key];//insert an element at the end of the list, if elements with such a key exist
-        for (;getNext(*ptr); ptr = getNext(*ptr)) {
+        for (; getNext(*ptr); ptr = getNext(*ptr)) {
         }
         setNext(*ptr, V);
         size_++;
@@ -193,11 +168,11 @@ public:
     const Value &at(const Key &k) const {
 
         const int key = hash(k);
-        if (H[key] == nullptr){//if there is no element with such a key
+        if (H[key] == nullptr) {//if there is no element with such a key
             throw std::exception();
         }
         auto pos = H[key];//search for the required key in the list
-        for (; pos; pos =getNext(*pos)) {
+        for (; pos; pos = getNext(*pos)) {
             if (getKey(*pos) == k) {
                 return getValue(*pos);
             }
@@ -229,10 +204,10 @@ private:
     int size_ = 0;
     int capacity = kBeginTableSize;
 
-    static const Key &getKey  ( const ListOfValues& v)  { return v.key; }//the "key" field must be unavailable for editing
-    static Value &getValue(ListOfValues& v) { return v.value; }
-    static ListOfValues *getNext(ListOfValues& v) { return v.next; }
-    void setNext(ListOfValues& v, ListOfValues *n) { v.next = n; }
+    static const Key &getKey(const ListOfValues &v) { return v.key; }//the "key" field must be unavailable for editing
+    static Value &getValue(ListOfValues &v) { return v.value; }
+    static ListOfValues *getNext(ListOfValues &v) { return v.next; }
+    void setNext(ListOfValues &v, ListOfValues *n) { v.next = n; }
 
     void resize() {
         size_ = 0;
