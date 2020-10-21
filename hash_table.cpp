@@ -74,7 +74,8 @@ public:
     }
 
     HashTable &operator=(const HashTable &b) {
-        if (*this == b)//do not copy the same element
+      //????
+        if (this == &b)//do not copy the same element
             return *this;
         clear();
         delete[] H;//remove "this" and copy "b"
@@ -177,7 +178,8 @@ public:
                 return getValue(*pos);
             }
         }
-        throw std::exception();
+        //???
+        throw std::exception("AAAAA!");
     }
 
     size_t size() const { return size_; }

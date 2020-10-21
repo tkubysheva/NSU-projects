@@ -1,9 +1,12 @@
 #include "mode.h"
 
+// include ???
+
 
 //один шаг от каждой стратегии, запись в исторю, вывод результатов для детализированной игры
 void OneGame(std::unique_ptr<Unit>& str1, std::unique_ptr<Unit>& str2, std::unique_ptr<Unit>& str3,
              std::vector<std::vector<char>>& history, bool B = false ,  std::string& n1 = (std::string &) "",  std::string& n2= (std::string &) "",  std::string& n3= (std::string &) ""){
+    // char -> enum
     std::vector<char> choice = {str1->choice(0, history), str2->choice(1, history), str3->choice(2, history)};
     history.push_back(choice);
     std::vector<int> res = T.at(choice);
@@ -133,7 +136,6 @@ void tournament(std::set<std::string>& names){
         }
     }
 
-
     std::string n;
     int max = 0;
     std::cout.setf(std::ios::fixed);
@@ -148,4 +150,3 @@ void tournament(std::set<std::string>& names){
     }
     std::cout << std::endl<< n << " TOTAL WIN" << std::endl;
 }
-
