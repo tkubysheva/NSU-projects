@@ -12,16 +12,6 @@ struct Value {
 
 
 class HashTable {
-    constexpr static int kBeginTableSize = 2;
-    constexpr static int IncreaseFactor = 2;
-    constexpr static double FillFactor = 0.75;
-
-    struct ListOfValues {
-        Key key;
-        Value value{};
-        ListOfValues *next = nullptr;
-    };
-
 public:
     HashTable();
     ~HashTable();
@@ -41,9 +31,17 @@ public:
     friend bool operator!=(const HashTable &a, const HashTable &b);
 
 private:
+    struct ListOfValues {
+        Key key;
+        Value value{};
+        ListOfValues *next = nullptr;
+    };
+    constexpr static int kBeginTableSize = 2;
+    constexpr static int IncreaseFactor = 2;
+    constexpr static double FillFactor = 0.75;
     ListOfValues **H;
-    int size_ = 0;
-    int capacity = kBeginTableSize;
+    size_t size_ = 0;
+    size_t capacity = kBeginTableSize;
     void resize();
     int hash(const Key &k) const;
     bool is_almost_full() const;

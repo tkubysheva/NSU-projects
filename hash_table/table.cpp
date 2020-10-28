@@ -8,10 +8,9 @@ T *begin(std::pair<T *, T *> const &p) { return p.first; }
 template<typename T>
 T *end(std::pair<T *, T *> const &p) { return p.second; }
 
-
 HashTable::HashTable() {//default constructor
     H = new ListOfValues *[capacity];
-    std::fill(&H[0], &H[capacity], nullptr);
+    std::fill(H, H + capacity, nullptr);
 }
 
 HashTable::~HashTable() {//simple destructor
@@ -22,7 +21,7 @@ HashTable::~HashTable() {//simple destructor
 HashTable::HashTable(const HashTable &b) {//copy constructor
     capacity = b.capacity;
     H = new ListOfValues *[capacity];
-    std::fill(&H[0], &H[capacity], nullptr);
+    std::fill(H, H + capacity, nullptr);
     for (auto bpos : std::make_pair(b.H, b.H + capacity)) {
         for (; bpos; bpos = getNext(*bpos)) {
             insert(getKey(*bpos), getValue(*bpos));
@@ -60,7 +59,7 @@ HashTable &HashTable::operator=(const HashTable &b) {
     delete[] H;//remove "this" and copy "b"
     capacity = b.capacity;
     H = new ListOfValues *[capacity];
-    std::fill(&H[0], &H[capacity], nullptr);
+    std::fill(H, H + capacity, nullptr);
     for (auto bpos : std::make_pair(b.H, b.H + capacity)) {
         for (; bpos; bpos = getNext(*bpos)) {
             insert(getKey(*bpos), getValue(*bpos));
@@ -185,7 +184,7 @@ void HashTable::resize() {
     int old_tsize = capacity;
     capacity *= IncreaseFactor;
     auto _H = new ListOfValues *[capacity];//create a new array 2 times larger
-    std::fill(&_H[0], &_H[capacity], nullptr);
+    std::fill(_H, _H + capacity, nullptr);
     std::swap(H, _H);
     for (auto bpos : std::make_pair(_H, _H + old_tsize)) {//add all elements of the old array to the new one
         for (; bpos; bpos = getNext(*bpos)) {
