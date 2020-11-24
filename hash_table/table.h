@@ -36,7 +36,7 @@ private:
         Value value{};
         ListOfValues *next = nullptr;
     };
-    constexpr static int kBeginTableSize = 2;
+    constexpr static size_t kBeginTableSize = 2;
     constexpr static int IncreaseFactor = 2;
     constexpr static double FillFactor = 0.75;
     ListOfValues **H;
