@@ -205,7 +205,7 @@ void HashTable::resize() {
     delete[] _H;
 }
 size_t HashTable::hash(const Key &k) const {//hash function
-    const int TS = capacity;
+    const size_t TS = capacity;
     size_t p = 0;
     for (const auto &i : k) {
         p += i;
