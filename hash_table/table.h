@@ -43,7 +43,7 @@ private:
     size_t size_ = 0;
     size_t capacity = kBeginTableSize;
     void resize();
-    int hash(const Key &k) const;
+    size_t hash(const Key &k) const;
     bool is_almost_full() const;
     static const Key &getKey(const ListOfValues &v) { return v.key; }//the "key" field must be unavailable for editing
     static Value &getValue(ListOfValues &v) { return v.value; }
