@@ -1,6 +1,5 @@
 #include "table.h"
 #include "gtest/gtest.h"
-namespace {
 
     class Hashtable : public ::testing::Test {
     protected:
@@ -141,4 +140,4 @@ namespace {
         ASSERT_ANY_THROW(CONST.at("bob"));
         ASSERT_ANY_THROW(CONST.at("b"));
     }
-}// namespace
+
