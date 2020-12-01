@@ -1,8 +1,10 @@
 #include "field.h"
 #include <QMouseEvent>
-#include <iostream>
 #include <QMessageBox>
 #include<vector>
+#include <stdlib.h>
+#include<fstream>
+#include<iostream>
 field::field(QWidget *parent) : QWidget(parent),
     timer(new QTimer(this))
 {
@@ -23,7 +25,6 @@ double field::cell_size_width(){
     return (double)width()/Game.FieldSize_x_;
 }
 void field::PaintField(QPainter &p){
-    QColor GridColor = "#808080";
     p.setPen(GridColor);
     for(double i = 0; i <= width(); i+= cell_size_width()){
         p.drawLine(i, 0, i, height());
@@ -38,7 +39,7 @@ void field::PaintCells(QPainter &p){
         for(int j = 0; j < Game.FieldSize_x_; ++j){
             if(Game.is_alive(j, i)){
                 QRectF rect(cell_size_width()*j,cell_size_height()*i,cell_size_width(), cell_size_height());
-                p.fillRect(rect, "#800080");
+                p.fillRect(rect, CellColor);
             }
         }
     }
@@ -53,38 +54,16 @@ void field::mousePressEvent(QMouseEvent *clik){
 
 void field::change_rules(QString r){
     std::string rules = r.toStdString();
-    auto pos1 = rules.find("b");
-    auto pos2 = rules.find("s");
-    Game.alive_count.clear();
-    Game.dead_count.clear();
-    if (pos1 != std::string::npos and pos2 !=std::string::npos) {
-        std::string arg1 = rules.substr(pos1+1, -pos1 - 1 +pos2);
-        std::string arg2 = rules.substr(pos2+1, rules.size()- 1 - pos2);
-        std::cout<<arg1 <<" "<<arg2<<std::endl;
-        for(auto i: arg1){
-            if (i - '0' > 0 and i - '0' < 10){
-                Game.dead_count.push_back(i-'0');
-            }else {
-                wrong_rules();
-                return;
-            }
-        }
-        for(auto i: arg2){
-            if (i - '0' > 0 and i - '0' < 10){
-                Game.alive_count.push_back(i-'0');
-            }else {
-                wrong_rules();
-                return;
-            }
-        }
+    if(!Game.change_rules(rules)){
+        wrong_rules();
     }
 }
 
+void field::wrong_file(){
+    QMessageBox::information(this, tr("Error"), tr("Wrong file's format."), QMessageBox::Ok);
+}
 void field::wrong_rules(){
-    QMessageBox::information(this,
-                                    tr("Wrong rules"),
-                                    tr("Right format: b3s23."),
-                                    QMessageBox::Ok);
+    QMessageBox::information(this, tr("Wrong rules"), tr("Right format: b3s23."), QMessageBox::Ok);
 }
 void field::mouseMoveEvent(QMouseEvent *clik)
 {
@@ -99,7 +78,7 @@ void field::mouseMoveEvent(QMouseEvent *clik)
 void field::on_clear_clicked()
 {
     timer->stop();
-    std::fill(Game.ThisField.begin(),Game.ThisField.end(), false);
+    Game.clear_field();
     update();
 }
 
@@ -133,18 +112,145 @@ void field::stop_clicked()
 void field::on_change_size_x_clicked(int x)
 {
     timer->stop();
-    Game.FieldSize_x_ = x;
-    std::vector<bool> f(x*Game.FieldSize_y_, false);
-    Game.ThisField = f;
-    Game.NextField = f;
+    Game.change_size(x, true);
     update();
 }
 void field::on_change_size_y_clicked(int y)
 {
     timer->stop();
-    Game.FieldSize_y_ = y;
-    std::vector<bool> f(y*Game.FieldSize_x_, false);
-    Game.ThisField = f;
-    Game.NextField = f;
+    Game.change_size(y);
     update();
+}
+
+void field::save_clicked(){
+    timer->stop();
+    std::fstream f("game.txt");
+    clear_file();
+    f << "x = "<< Game.FieldSize_x_<< "; y = "<< Game.FieldSize_y_<<std::endl;
+    f << "b"<<Game.dead_for_print<<"s"<<Game.alive_for_print<<std::endl;
+    int count = 0;
+    for(int i = 0; i < Game.FieldSize_y_; ++i){
+        for(int j = 0; j < Game.FieldSize_x_; ++j){
+            if(j == 0){
+                if(i != 0){
+                    f << count<<"$"<<(Game.is_alive(j, i) ? "o":"b");
+                }
+                else {
+                    f << (Game.is_alive(j, i) ? "o":"b");
+                }
+                count = 1;
+            }
+            else {
+                if(Game.is_alive(j, i) == Game.is_alive(j-1, i)){
+                    count++;
+                }
+                else{
+                    f << count<<(Game.is_alive(j, i) ? "o" : "b");
+                    count = 1;
+                }
+            }
+        }
+        if(i == Game.FieldSize_y_ - 1){
+            f << count << "$"<<std::endl;
+        }
+    }
+    f.close();
+}
+
+void field::clear_file(){
+    std::ofstream ofs;
+    ofs.open("game.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+}
+
+load_data field::load_clicked(){
+    timer->stop();
+    std::fstream f("game.txt");
+    std::string s, x_s, y_s, r_s;
+    int x, y;
+    std::getline(f, s);
+    auto p = s.find(';');
+    x_s = s.substr(4, p-4);
+    if((x = atoi(x_s.c_str())) == 0){
+        wrong_file();
+        return {false, 0, 0, ""};
+    }
+    y_s = s.substr(p+6, s.size() - p - 6);
+    if((y = atoi(y_s.c_str()))== 0){
+        wrong_file();
+        return {false, 0, 0, ""};
+    }
+    std::getline(f, r_s);
+    std::getline(f, s);
+    f.close();
+    std::vector<bool> field(x*y);
+    std::fill(field.begin(), field.end(), false);
+    int pos = 0, count = 0, control_sum = 0;
+    std::string num = "";
+    bool l = false;
+    for(const auto& i : s){
+        if(l){
+            if(i == 'b' or i == '$'){
+                l = false;
+                count = atoi(num.c_str());
+                num = "";
+                control_sum += count;
+                if(i == '$'){
+                    if(control_sum != x){
+                        wrong_file();
+                        return {false, 0, 0, ""};
+                    }
+                    else control_sum = 0;
+                }
+                for (int i = pos; i< pos+count; ++i){
+                    field[i] = true;
+                }
+                pos += count;
+            }else if(i-'0' >=0 and i-'0'<= 9){
+                num += i;
+            }
+            else {
+                wrong_file();
+                return {false, 0, 0, ""};
+            }
+        }else{
+            if(i == 'o' or i == '$'){
+                count = atoi(num.c_str());
+                num = "";
+                pos += count;
+                control_sum += count;
+                if(i == '$'){
+                    if(control_sum != x){
+                        wrong_file();
+                        return {false, 0, 0, ""};
+                    }
+                    else control_sum = 0;
+                }
+                if(i == 'o'){
+                    l = true;  
+                }
+
+            }else if(i-'0' >=0 and i-'0'<= 9){
+                num += i;
+            }
+            else if(i != 'b'){
+                wrong_file();
+                return {false, 0, 0, ""};
+            }
+        }
+    }
+    if(pos != x*y){
+        wrong_file();
+        return {false, 0, 0, ""};
+    }
+    if(!Game.change_rules(r_s)){
+        wrong_file();
+        return {false, 0, 0, ""};
+    }
+    Game.change_size(x, true);
+    Game.change_size(y);
+    for(int i = 0; i < x*y; ++i)
+        Game.ThisField[i] = field[i];
+    update();
+    return {true, x, y, r_s};
 }

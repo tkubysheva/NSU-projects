@@ -2,18 +2,72 @@
 #include "field.h"
 #include <algorithm>
 game::game():
-    ThisField(FieldSize_x_*FieldSize_y_, false),
-    NextField(FieldSize_x_*FieldSize_y_, false)
+    begin_size_x(20),
+    begin_size_y(20),
+    FieldSize_x_(begin_size_x),
+    FieldSize_y_(begin_size_y),
+    alive_rules ({2, 3}),
+    dead_rules ({3}),
+    alive_for_print("23"),
+    dead_for_print("3"),
+    ThisField(begin_size_x*begin_size_y, false),
+    NextField(begin_size_x*begin_size_y, false)
+
+
 {
-    alive_count = {2, 3};
-    dead_count = {3};
+
+}
+void game::change_size(int size, bool x ){
+    if(x){
+        FieldSize_x_ = size;
+        size *= FieldSize_y_;
+    }else{
+        FieldSize_y_ = size;
+        size *= FieldSize_x_;
+    }
+    ThisField.resize(size, false);
+    NextField.resize(size, false);
+}
+bool game::change_rules(std::string rules){
+    auto pos1 = rules.find("b");
+    auto pos2 = rules.find("s");
+
+    if (pos1 != std::string::npos and pos2 !=std::string::npos) {
+        alive_rules.clear();
+        dead_rules.clear();
+        std::string arg1 = rules.substr(pos1+1, -pos1 - 1 +pos2);
+        std::string arg2 = rules.substr(pos2+1, rules.size()- 1 - pos2);
+        for(const auto& i: arg1){
+            if (i - '0' > 0 and i - '0' < 10){
+                dead_rules.push_back(i-'0');
+            }else {
+                dead_rules = {3};
+                dead_for_print = "3";
+                return false;
+            }
+            dead_for_print = arg1;
+        }
+        for(const auto& i: arg2){
+            if (i - '0' > 0 and i - '0' < 10){
+                alive_rules.push_back(i-'0');
+            }else {
+                alive_rules = {2,3};
+                alive_for_print = "23";
+                return false;
+            }
+            alive_for_print = arg2;
+        }
+    }else{
+        return false;
+    }
+    return true;
 }
 
 bool game::right_neighbor(int n, bool is_alive){
     if(is_alive){
-        return  std::find(alive_count.begin(), alive_count.end(), n) != alive_count.end();
+        return  std::find(alive_rules.begin(), alive_rules.end(), n) != alive_rules.end();
     }
-    return  std::find(dead_count.begin(), dead_count.end(), n) != dead_count.end();
+    return  std::find(dead_rules.begin(), dead_rules.end(), n) != dead_rules.end();
 }
 
 void game::next_field_generation(){
@@ -42,6 +96,10 @@ bool game::field_equal(){
             return false;
     }
     return true;
+}
+
+void game::clear_field(){
+    std::fill(ThisField.begin(),ThisField.end(), false);
 }
 
 bool game::will_be_alive(int x, int y){

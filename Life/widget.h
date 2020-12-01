@@ -19,11 +19,11 @@ public:
 
 
 private slots:
-
+void load_clicked();
 
 private:
     Ui::Widget *ui;
     field *Field_;
-    game Game_;
+
 };
 #endif // WIDGET_H
