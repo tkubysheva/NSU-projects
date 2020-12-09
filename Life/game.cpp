@@ -3,9 +3,14 @@
 #include <algorithm>
 #include <string>
 game::game()
-    : begin_size_x(20), begin_size_y(20), FieldSize_x_(begin_size_x), FieldSize_y_(begin_size_y), alive_rules({2, 3}), dead_rules({3}), ThisField(begin_size_x * begin_size_y, false), NextField(begin_size_x * begin_size_y, false)
-
-{
+    : begin_size_x(20),
+      begin_size_y(20),
+      FieldSize_x_(begin_size_x),
+      FieldSize_y_(begin_size_y),
+      alive_rules({2, 3}),
+      dead_rules({3}),
+      ThisField(begin_size_x * begin_size_y, false),
+      NextField(begin_size_x * begin_size_y, false) {
 }
 
 size_t game::x() const {

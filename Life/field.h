@@ -4,7 +4,6 @@
 #include "game.h"
 #include <QTimer>
 #include <QWidget>
-#include <string>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

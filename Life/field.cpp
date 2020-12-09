@@ -5,9 +5,6 @@
 #include <QPainter>
 #include <QString>
 #include <fstream>
-#include <iostream>
-#include <stdlib.h>
-#include <vector>
 
 field::field(QWidget *parent) : QWidget(parent), timer(new QTimer(this)) {
     timer->setInterval(300);
