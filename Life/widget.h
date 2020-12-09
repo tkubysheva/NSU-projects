@@ -1,16 +1,17 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <QWidget>
-#include "game.h"
 #include "field.h"
+#include "game.h"
+#include <QWidget>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
+namespace Ui {
+    class Widget;
+}
 QT_END_NAMESPACE
 
-class Widget : public QWidget
-{
+class Widget : public QWidget {
     Q_OBJECT
 
 public:
@@ -19,11 +20,10 @@ public:
 
 
 private slots:
-void load_clicked();
+    void load_clicked();
 
 private:
     Ui::Widget *ui;
     field *Field_;
-
 };
-#endif // WIDGET_H
+#endif// WIDGET_H
