@@ -21,27 +21,32 @@ TEST_F(FirstTest, detailed) {
     char a[]= "poor-trusting-fool", b[]= "all-defect", c[] = "random", d[] = "asdfg",
          e[] = "--mode=fast", f[] ="--mode=fff", g[]= "--mote=fast", h[] = "--mode=detailed", k[] = "soft-tit-for-tat";
     char* argv_0[] = {C,a, a, c};
-    EXPECT_ANY_THROW(creator(4, argv_0));
+    Mode m1(4, argv_0);
+    EXPECT_ANY_THROW(m1.creator());
     char* argv_2[] = {C,d, a, c};
-    EXPECT_NO_THROW(creator(4, argv_2));
-    Mode m = creator(4, argv_2);
-    EXPECT_ANY_THROW(m.game->play(m.matrix, m.names, m.step, m.configs_dir));
-    char* argv_1[] = {C,a, c, e};
-    EXPECT_ANY_THROW(creator(4, argv_1));
-    argv_1[3] = f;
-    EXPECT_ANY_THROW(creator(4, argv_1));
-    char* argv_3[] = {C,a, c, b};
-    EXPECT_NO_THROW(creator(4, argv_3));
-    m = creator(4, argv_3);
+    Mode m2(4, argv_2);
+    EXPECT_NO_THROW(m2.creator());
     Gamer gamer;
     gamer.Test = true;
     gamer.Button = {13, 13, 13, 13, 13, 13, 13, 'q'};
-    EXPECT_NO_THROW(m.game->play(m.matrix, m.names, m.step, m.configs_dir, gamer));
-    EXPECT_EQ(m.game->steps_counter, 8);
+    Mode m3(4, argv_2);
+    EXPECT_ANY_THROW(m3.creator()->play(gamer));
+    char* argv_1[] = {C,a, c, e};
+    Mode m4(4, argv_1);
+    EXPECT_ANY_THROW(m4.creator());
+    argv_1[3] = f;
+    Mode m5(4, argv_1);
+    EXPECT_ANY_THROW(m5.creator());
+    char* argv_3[] = {C,a, c, b};
+    Mode m6(4, argv_3);
+    EXPECT_NO_THROW(m6.creator());
+    EXPECT_NO_THROW(m6.creator()->play(gamer));
     char* argv_4[] = {C, a, b, c, k, h};
-    EXPECT_ANY_THROW(creator(4, argv_4));
+    Mode m7(4, argv_4);
+    EXPECT_ANY_THROW(m7.creator());
     char* argv_5[] = {C, a, b, c, g};
-    EXPECT_ANY_THROW(creator(4, argv_5));
+    Mode m8(4, argv_5);
+    EXPECT_ANY_THROW(m8.creator());
 }
 
 
@@ -49,18 +54,3 @@ TEST_F(FirstTest, g) {
     //char* argv[] = {"poor-trusting-fool", "poor-trusting-fool", "random"};
     //EXPECT_ANY_THROW(creator(5, argv));
 }
-
-
-/*
-TEST_F(FirstTest, detailed) {
-    auto names = std::set<std::string>{"forgive-revenge", "soft-tit-for-tat", "poor-trusting-fool"};
-    std::shared_ptr<PlayMode> game = InitialMode("detailed");
-    game->gamer.Test = true;
-    game->gamer.Button = {13, 13, 13, 13, 13, 13, 13, 'q'};
-    MATRIX_ m = CreateMatrix("");
-    game->play(m, names, 1, "");
-    EXPECT_EQ(game->steps_counter, 7);
-    EXPECT_EQ(game->str[0]->score, game->str[1]->score);
-    EXPECT_EQ(game->str[2]->score, game->str[1]->score);
-    EXPECT_EQ(game->str[0]->score, 7 * 7);
-}*/
