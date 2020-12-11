@@ -17,15 +17,17 @@ void field::paintEvent(QPaintEvent *) {
 }
 
 double field::cell_size_height() {
-    return (double) height() / Game.y();
+    return (double) height() / game_.y();
 }
 
 double field::cell_size_width() {
-    return (double) width() / Game.x();
+    return (double) width() / game_.x();
 }
 
 void field::PaintField(QPainter &p) {
     p.setPen(GridColor);
+    QRectF rect(0, 0, width() - 1, height() - 1);
+    p.drawRect(rect);
     for (double i = 0; i <= width(); i += cell_size_width()) {
         p.drawLine(i, 0, i, height());
     }
@@ -35,9 +37,9 @@ void field::PaintField(QPainter &p) {
 }
 
 void field::PaintCells(QPainter &p) {
-    for (size_t i = 0; i < Game.y(); ++i) {
-        for (size_t j = 0; j < Game.x(); ++j) {
-            if (Game.is_alive(j, i)) {
+    for (size_t i = 0; i < game_.y(); ++i) {
+        for (size_t j = 0; j < game_.x(); ++j) {
+            if (game_.is_alive(j, i)) {
                 QRectF rect(cell_size_width() * j, cell_size_height() * i, cell_size_width(), cell_size_height());
                 p.fillRect(rect, CellColor);
             }
@@ -48,13 +50,13 @@ void field::PaintCells(QPainter &p) {
 void field::mousePressEvent(QMouseEvent *clik) {
     int i = clik->x() / cell_size_width();
     int j = clik->y() / cell_size_height();
-    Game.change_state(i, j);
+    game_.change_state(i, j);
     update();
 }
 
 void field::change_rules(QString r) {
     std::string rules = r.toStdString();
-    if (!Game.change_rules(rules)) {
+    if (!game_.change_rules(rules)) {
         wrong_rules();
     }
 }
@@ -68,31 +70,31 @@ void field::wrong_rules() {
 void field::mouseMoveEvent(QMouseEvent *clik) {
     int i = clik->x() / cell_size_width();
     int j = clik->y() / cell_size_height();
-    if (!Game.is_alive(i, j)) {
-        Game.change_state(i, j);
+    if (!game_.is_alive(i, j)) {
+        game_.change_state(i, j);
         update();
     }
 }
 
 void field::on_clear_clicked() {
     timer->stop();
-    Game.clear_field();
+    game_.clear_field();
     update();
 }
 
 void field::on_one_step_clicked() {
     timer->stop();
-    Game.next_field_generation();
-    Game.converse_field();
+    game_.next_field_generation();
+    game_.converse_field();
     update();
 }
 
 void field::generation_next_field() {
-    Game.next_field_generation();
-    if (Game.field_equal()) {
+    game_.next_field_generation();
+    if (game_.field_equal()) {
         timer->stop();
     }
-    Game.converse_field();
+    game_.converse_field();
     update();
 }
 
@@ -106,12 +108,12 @@ void field::on_stop_clicked() {
 
 void field::on_change_size_x_clicked(int x) {
     timer->stop();
-    Game.change_size(x, true);
+    game_.change_size(x, true);
     update();
 }
 void field::on_change_size_y_clicked(int y) {
     timer->stop();
-    Game.change_size(y);
+    game_.change_size(y);
     update();
 }
 
@@ -121,28 +123,28 @@ void field::on_save_clicked() {
     std::string filename = str.toStdString();
     std::fstream f(filename);
     clear_file(filename);
-    f << "x = " << Game.x() << "; y = " << Game.y() << std::endl;
-    f << "b" << Game.dead_for_print() << "s" << Game.alive_for_print() << std::endl;
+    f << "x = " << game_.x() << "; y = " << game_.y() << std::endl;
+    f << "b" << game_.dead_for_print() << "s" << game_.alive_for_print() << std::endl;
     int count = 0;
-    for (size_t i = 0; i < Game.y(); ++i) {
-        for (size_t j = 0; j < Game.x(); ++j) {
+    for (size_t i = 0; i < game_.y(); ++i) {
+        for (size_t j = 0; j < game_.x(); ++j) {
             if (j == 0) {
                 if (i != 0) {
-                    f << count << "$" << (Game.is_alive(j, i) ? "o" : "b");
+                    f << count << "$" << (game_.is_alive(j, i) ? "o" : "b");
                 } else {
-                    f << (Game.is_alive(j, i) ? "o" : "b");
+                    f << (game_.is_alive(j, i) ? "o" : "b");
                 }
                 count = 1;
             } else {
-                if (Game.is_alive(j, i) == Game.is_alive(j - 1, i)) {
+                if (game_.is_alive(j, i) == game_.is_alive(j - 1, i)) {
                     count++;
                 } else {
-                    f << count << (Game.is_alive(j, i) ? "o" : "b");
+                    f << count << (game_.is_alive(j, i) ? "o" : "b");
                     count = 1;
                 }
             }
         }
-        if (i == Game.y() - 1) {
+        if (i == game_.y() - 1) {
             f << count << "$" << std::endl;
         }
     }
@@ -241,19 +243,18 @@ load_data field::load_clicked() {
         wrong_file();
         return {false, 0, 0, ""};
     }
-    std::vector<bool> field(x * y);
-    std::fill(field.begin(), field.end(), false);
+    std::vector<bool> field(x * y, false);
     if (!data_processing(data, x, y, field)) {
         wrong_file();
         return {false, 0, 0, ""};
     }
-    if (!Game.change_rules(r_s)) {
+    if (!game_.change_rules(r_s)) {
         wrong_file();
         return {false, 0, 0, ""};
     }
-    Game.change_size(x, true);
-    Game.change_size(y);
-    Game.converse_field(field);
+    game_.change_size(x, true);
+    game_.change_size(y);
+    game_.converse_field(field);
     update();
     return {true, x, y, r_s};
 }

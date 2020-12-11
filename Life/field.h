@@ -29,6 +29,7 @@ public slots:
     void on_change_size_x_clicked(int x);
     void on_change_size_y_clicked(int x);
     void change_rules(QString);
+    void generation_next_field();
 
 public:
     field(QWidget *parent = nullptr);
@@ -38,7 +39,7 @@ public:
     load_data load_clicked();
 
 private:
-    game Game;
+    Game game_;
     void PaintField(QPainter &p);
     void PaintCells(QPainter &p);
     QTimer *timer;
@@ -48,7 +49,6 @@ private:
     double cell_size_width();
     void wrong_rules();
     void wrong_file();
-    void generation_next_field();
     void clear_file(std::string filename);
     bool data_processing(const std::string &s2, const int &x, const int &y, std::vector<bool> &field);
     bool new_size_processing(const std::string &s, int &x, int &y);

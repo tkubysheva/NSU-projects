@@ -2,9 +2,9 @@
 #define GAME_H
 #include <string>
 #include <vector>
-class game {
+class Game {
 public:
-    game();
+    Game();
     size_t x() const;
     size_t y() const;
     void set_x(size_t);

@@ -2,7 +2,7 @@
 #include "field.h"
 #include <algorithm>
 #include <string>
-game::game()
+Game::Game()
     : begin_size_x(20),
       begin_size_y(20),
       FieldSize_x_(begin_size_x),
@@ -13,30 +13,30 @@ game::game()
       NextField(begin_size_x * begin_size_y, false) {
 }
 
-size_t game::x() const {
+size_t Game::x() const {
     return FieldSize_x_;
 }
 
-size_t game::y() const {
+size_t Game::y() const {
     return FieldSize_y_;
 }
 
-void game::set_x(size_t x) {
+void Game::set_x(size_t x) {
     FieldSize_x_ = x;
 }
 
-void game::set_y(size_t y) {
+void Game::set_y(size_t y) {
     FieldSize_y_ = y;
 }
 
-std::string game::alive_for_print() {
+std::string Game::alive_for_print() {
     std::string res;
     for (const auto &i : alive_rules) {
         res += std::to_string(i);
     }
     return res;
 }
-std::string game::dead_for_print() {
+std::string Game::dead_for_print() {
     std::string res;
     for (const auto &i : dead_rules) {
         res += std::to_string(i);
@@ -44,7 +44,7 @@ std::string game::dead_for_print() {
     return res;
 }
 
-void game::change_size(size_t size, bool x) {
+void Game::change_size(size_t size, bool x) {
     if (x) {
         FieldSize_x_ = size;
         size *= FieldSize_y_;
@@ -55,7 +55,7 @@ void game::change_size(size_t size, bool x) {
     ThisField.resize(size, false);
     NextField.resize(size, false);
 }
-bool game::change_rules(std::string rules) {
+bool Game::change_rules(std::string rules) {
     auto pos1 = rules.find("b");
     auto pos2 = rules.find("s");
 
@@ -86,14 +86,14 @@ bool game::change_rules(std::string rules) {
     return true;
 }
 
-bool game::right_neighbor(int n, bool is_alive) {
+bool Game::right_neighbor(int n, bool is_alive) {
     if (is_alive) {
         return std::find(alive_rules.begin(), alive_rules.end(), n) != alive_rules.end();
     }
     return std::find(dead_rules.begin(), dead_rules.end(), n) != dead_rules.end();
 }
 
-void game::next_field_generation() {
+void Game::next_field_generation() {
     for (size_t i = 0; i < FieldSize_y_; ++i) {
         for (size_t j = 0; j < FieldSize_x_; ++j) {
             NextField[i * FieldSize_x_ + j] = will_be_alive(j, i);
@@ -101,36 +101,28 @@ void game::next_field_generation() {
     }
 }
 
-bool game::is_alive(size_t x, size_t y) {
+bool Game::is_alive(size_t x, size_t y) {
     return ThisField[y * FieldSize_x_ + x];
 }
 
-void game::change_state(size_t x, size_t y) {
+void Game::change_state(size_t x, size_t y) {
     ThisField[y * FieldSize_x_ + x] = !ThisField[y * FieldSize_x_ + x];
 }
-void game::converse_field(std::vector<bool> f) {
-    for (size_t i = 0; i < FieldSize_x_ * FieldSize_y_; ++i) {
-        ThisField[i] = f[i];
-    }
+void Game::converse_field(std::vector<bool> f) {
+    std::swap(ThisField, f);
 }
-void game::converse_field() {
-    for (size_t i = 0; i < FieldSize_x_ * FieldSize_y_; ++i) {
-        ThisField[i] = NextField[i];
-    }
+void Game::converse_field() {
+    std::swap(ThisField, NextField);
 }
-bool game::field_equal() {
-    for (size_t i = 0; i < FieldSize_x_ * FieldSize_y_; ++i) {
-        if (ThisField[i] != NextField[i])
-            return false;
-    }
-    return true;
+bool Game::field_equal() {
+    return (ThisField == NextField);
 }
 
-void game::clear_field() {
+void Game::clear_field() {
     std::fill(ThisField.begin(), ThisField.end(), false);
 }
 
-bool game::will_be_alive(size_t x, size_t y) {
+bool Game::will_be_alive(size_t x, size_t y) {
     int alive_nearby = 0;
     if (x > 0 and x < FieldSize_x_ - 1 and y > 0 and y < FieldSize_y_ - 1) {
         alive_nearby += ThisField[x + (y + 1) * FieldSize_x_] + ThisField[x + (y - 1) * FieldSize_x_] +
