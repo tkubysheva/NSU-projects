@@ -23,8 +23,8 @@ class field : public QWidget {
 public slots:
     void on_clear_clicked();
     void on_one_step_clicked();
-    void on_start_clicked();
-    void on_stop_clicked();
+    void start_clicked();
+    void stop_clicked();
     void on_save_clicked();
     void on_change_size_x_clicked(int x);
     void on_change_size_y_clicked(int x);

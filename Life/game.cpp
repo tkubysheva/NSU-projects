@@ -10,7 +10,9 @@ game::game()
       alive_rules({2, 3}),
       dead_rules({3}),
       ThisField(begin_size_x * begin_size_y, false),
-      NextField(begin_size_x * begin_size_y, false) {
+      NextField(begin_size_x * begin_size_y, false)
+
+{
 }
 
 size_t game::x() const {

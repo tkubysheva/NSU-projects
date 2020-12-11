@@ -96,11 +96,11 @@ void field::generation_next_field() {
     update();
 }
 
-void field::on_start_clicked() {
+void field::start_clicked() {
     timer->start();
 }
 
-void field::on_stop_clicked() {
+void field::stop_clicked() {
     timer->stop();
 }
 
