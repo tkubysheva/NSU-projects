@@ -7,12 +7,12 @@ namespace {
         return new Detailed;
     }
     bool gen() {
-        Factory<PlayMode, std::string, PlayMode *(*) ()>::getInstance()->addCreator("detailed", createDetailedMode);
+        Factory<PlayMode, std::string, PlayMode *(*) ()>::getInstance()->
+                addCreator("detailed", createDetailedMode);
         return true;
     }
     static bool d = gen();
 }// namespace
-
 
 
 void Detailed::play( Gamer gamer) {

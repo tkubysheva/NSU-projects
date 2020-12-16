@@ -7,5 +7,3 @@ public:
     char choice(std::vector<std::vector<char>> &) override;
     std::string name() override;
 };
-
-Strategy *createTTFT();

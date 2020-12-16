@@ -9,15 +9,15 @@ template<typename T>
 T convert_(char *arg);
 
 class Mode {
+private:
     std::string mode = "detailed";
     int step = 1000;
     std::string matrix_dir;
     std::string configs_dir;
     MATRIX_ matrix;
     std::set<std::string> names;
-    void treatment_arg(int argc, char *argv[]);
 public:
-    Mode() = default;
+    Mode() = delete;
     Mode(int argc, char *argv[]);
     std::unique_ptr<PlayMode> creator();
 };

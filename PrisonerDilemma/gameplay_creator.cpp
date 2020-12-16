@@ -1,8 +1,7 @@
-#include <sstream>
 #include "gameplay_creator.h"
-#include <map>
 #include "factory.h"
 #include <memory>
+#include <sstream>
 
 template<typename T>
 T convert_(char *arg) {
@@ -12,14 +11,15 @@ T convert_(char *arg) {
     return n;
 }
 
-std::unique_ptr<PlayMode> Mode::creator(){
+std::unique_ptr<PlayMode> Mode::creator() {
     std::unique_ptr<PlayMode> game(Factory<PlayMode, std::string,
-            PlayMode *(*) ()>::getInstance()
+                                           PlayMode *(*) ()>::getInstance()
                                            ->makeObject(mode));
-    game->InitialGame(matrix_dir, step,  names, configs_dir);
+    game->InitialGame(matrix_dir, step, names, configs_dir);
     return game;
 }
-void Mode::treatment_arg(int argc, char *argv[]) {
+
+Mode::Mode(int argc, char **argv) {
     if (argc < 4) {
         throw std::runtime_error("NOT ENOUGH ARGUMENTS");
     }
@@ -27,12 +27,12 @@ void Mode::treatment_arg(int argc, char *argv[]) {
         auto arg = convert_<std::string>(argv[i]);
         if (arg.find("--") != 0) {
             names.insert(arg);
-            if (names.size() == 4) {
-                mode = "tournament";
-            }
         } else {
             if (names.size() < 3) {
                 throw std::runtime_error("INVALID NUMBER OF STRATEGY NAMES");
+            }
+            if (names.size() == 4) {
+                mode = "tournament";
             }
             auto pos = arg.find('=');
             if (pos != std::string::npos) {
@@ -60,7 +60,4 @@ void Mode::treatment_arg(int argc, char *argv[]) {
     if (mode == "detailed" and names.size() > 3) {
         throw std::runtime_error("DETAILED MOD IS POSSIBLE ONLY FOR THREE PLAYERS");
     }
-}
-Mode::Mode(int argc, char **argv) {
-    treatment_arg(argc, argv);
 }

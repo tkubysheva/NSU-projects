@@ -1,7 +1,5 @@
 #include "detailed_mode.h"
 #include "factory.h"
-#include "mode.h"
-#include "table.h"
 #include "gameplay_creator.h"
 #include <gtest/gtest.h>
 #include <memory>
@@ -16,7 +14,7 @@ protected:
     }
 
 };
-TEST_F(FirstTest, detailed) {
+TEST_F(FirstTest, trow) {
     char C[] = "test";
     char a[]= "poor-trusting-fool", b[]= "all-defect", c[] = "random", d[] = "asdfg",
          e[] = "--mode=fast", f[] ="--mode=fff", g[]= "--mote=fast", h[] = "--mode=detailed", k[] = "soft-tit-for-tat";
@@ -49,8 +47,3 @@ TEST_F(FirstTest, detailed) {
     EXPECT_ANY_THROW(m8.creator());
 }
 
-
-TEST_F(FirstTest, g) {
-    //char* argv[] = {"poor-trusting-fool", "poor-trusting-fool", "random"};
-    //EXPECT_ANY_THROW(creator(5, argv));
-}

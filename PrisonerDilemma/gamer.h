@@ -9,6 +9,10 @@ struct Gamer {
             count++;
             return (Button[count - 1] == 'q');
         }
+        if(count == 0){
+            count++;
+            return false;
+        }
         int c = getch();
         if (c == 'q')
             return true;

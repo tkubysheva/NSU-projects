@@ -5,16 +5,18 @@
 
 
 namespace {
+    Strategy* createCChoice(){
+        return new CChoice;
+    }
+
     bool g(){
-        Factory<Strategy, std::string, Strategy*(*)()>::getInstance()->addCreator("change-choice", createCChoice);
+        Factory<Strategy, std::string, Strategy*(*)()>::getInstance()->
+                addCreator("change-choice", createCChoice);
         return true;
     }
     static bool b = g();
 }
 
-Strategy* createCChoice(){
-    return new CChoice;
-}
 
 char CChoice::choice( std::vector<std::vector<char>>& history){
     if (((history.size() - 1 )/ cchoice_number) % 2 != 0)

@@ -10,5 +10,3 @@ public:
     int cchoice_number = 10;
     void GetInformation(const std::string&) override;
 };
-
-Strategy *createCChoice ();

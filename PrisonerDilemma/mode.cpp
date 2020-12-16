@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
-typedef std::shared_ptr<Strategy> StrategyPtr;
+typedef std::unique_ptr<Strategy> StrategyPtr;
 
 void PlayMode::InitialGame(const std::string& matr_conf, const int& steps_, const std::set<std::string> &names, const std::string& str_conf){
     matrix = CreateMatrix(matr_conf);
@@ -33,10 +33,10 @@ void PlayMode::Initial(const std::set<std::string> &names,const std::string &con
     n1 = *n;
     n2 = *(++n);
     n3 = *(++n);
-    StrategyPtr str1(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n1));
-    StrategyPtr str2(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n2));
-    StrategyPtr str3(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n3));
-    str = {str1, str2, str3};
+    str.emplace_back(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n1));
+    str.emplace_back(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n2));
+    str.emplace_back(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n3));
+
     for (int i = 0; i < str.size(); ++i) {
         str[i]->number_in_history = i;
         str[i]->GetInformation(configs);

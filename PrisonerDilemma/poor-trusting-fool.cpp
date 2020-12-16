@@ -4,6 +4,9 @@
 
 
 namespace {
+    Strategy *createPTF() {
+        return new PTF;
+    }
     bool g() {
         Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->addCreator("poor-trusting-fool", createPTF);
         return true;
@@ -11,9 +14,7 @@ namespace {
     static bool b = g();
 }// namespace
 
-Strategy *createPTF() {
-    return new PTF;
-}
+
 
 char PTF::choice(std::vector<std::vector<char>> &) {
     return 'C';

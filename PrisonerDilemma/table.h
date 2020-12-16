@@ -39,5 +39,6 @@ static MATRIX_ CreateMatrix(const std::string &filename) {
         T[{'C', 'C', 'C'}] = {a, b, c};
     } else
         throw std::runtime_error("file with matrix not found :(");
+    in.close();
     return T;
 }
