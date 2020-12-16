@@ -33,4 +33,5 @@ void CChoice::GetInformation(const std::string & dir) {
         in >> cchoice_number;
     }
     else throw std::runtime_error("FILE change-choice.txt NOT FOUND IN DIRECTORY "+ dir);
+    in.close();
 }
