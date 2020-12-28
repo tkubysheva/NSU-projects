@@ -11,7 +11,7 @@ T convert_(char *arg) {
     return n;
 }
 
-std::unique_ptr<PlayMode> Mode::creator() {
+std::unique_ptr<PlayMode> Gameplay::creator() {
     std::unique_ptr<PlayMode> game(Factory<PlayMode, std::string,
                                            PlayMode *(*) ()>::getInstance()
                                            ->makeObject(mode));
@@ -19,7 +19,7 @@ std::unique_ptr<PlayMode> Mode::creator() {
     return game;
 }
 
-Mode::Mode(int argc, char **argv) {
+Gameplay::Gameplay(int argc, char **argv) {
     if (argc < 4) {
         throw std::runtime_error("NOT ENOUGH ARGUMENTS");
     }
@@ -27,13 +27,14 @@ Mode::Mode(int argc, char **argv) {
         auto arg = convert_<std::string>(argv[i]);
         if (arg.find("--") != 0) {
             names.insert(arg);
+            if (names.size() == 4) {
+                mode = "tournament";
+            }
         } else {
             if (names.size() < 3) {
                 throw std::runtime_error("INVALID NUMBER OF STRATEGY NAMES");
             }
-            if (names.size() == 4) {
-                mode = "tournament";
-            }
+
             auto pos = arg.find('=');
             if (pos != std::string::npos) {
                 std::string arg1 = arg.substr(2, pos - 2);
@@ -58,6 +59,6 @@ Mode::Mode(int argc, char **argv) {
         throw std::runtime_error("INVALID NUMBER OF STRATEGY NAMES");
     }
     if (mode == "detailed" and names.size() > 3) {
-        throw std::runtime_error("DETAILED MOD IS POSSIBLE ONLY FOR THREE PLAYERS");
+        throw std::runtime_error("DETAILED MOD IS POSSIBLE ONLY FOR THREE PLAYERS" );
     }
 }

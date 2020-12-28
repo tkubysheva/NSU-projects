@@ -5,8 +5,8 @@
 
 class CChoice : public Strategy {
 public:
-    char choice (std::vector<std::vector<char>>&) override;
+    CHOICE choice (std::vector<std::vector<CHOICE>>&) override;
     std::string name() override;
     int cchoice_number = 10;
-    void GetInformation(const std::string&) override;
+    void MaybeLoadInfo(const std::string&) override;
 };

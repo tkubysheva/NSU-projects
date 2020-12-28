@@ -1,13 +1,11 @@
 #include "mode.h"
 #include "factory.h"
 #include "table.h"
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
-#include <algorithm>
 
-typedef std::unique_ptr<Strategy> StrategyPtr;
-
-void PlayMode::InitialGame(const std::string& matr_conf, const int& steps_, const std::set<std::string> &names, const std::string& str_conf){
+void PlayMode::InitialGame(const std::string &matr_conf, const size_t &steps_, const std::set<std::string> &names, const std::string &str_conf) {
     matrix = CreateMatrix(matr_conf);
     steps = steps_;
     names_ = names;
@@ -17,47 +15,32 @@ void PlayMode::InitialGame(const std::string& matr_conf, const int& steps_, cons
 
 //один шаг от каждой стратегии, запись в исторю, вывод результатов для детализированной игры
 void PlayMode::OneGame(bool detailed) {
-    std::vector<char> choice = {str[0]->choice( history), str[1]->choice(history), str[2]->choice(history)};
+    std::vector<CHOICE> choice = {str[0]->choice(history), str[1]->choice(history), str[2]->choice(history)};
     history.push_back(choice);
     std::vector<int> res = matrix.at(choice);
-    for(int i = 0; i < 3; ++i){
-        score[i] +=res[i];
+    for (size_t i = 0; i < 3; ++i) {
+        score[i] += res[i];
     }
+    print.update_res(res);
     if (detailed) {
-        PrintRes(choice, res);
+        print.detailed(choice, res);
     }
 }
-void PlayMode::Initial(const std::set<std::string> &names,const std::string &configs) {
+void PlayMode::Initial(const std::set<std::string> &names, const std::string &configs) {
     std::string n1, n2, n3;
     auto n = names.begin();
     n1 = *n;
     n2 = *(++n);
     n3 = *(++n);
+    str.clear();
     str.emplace_back(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n1));
     str.emplace_back(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n2));
     str.emplace_back(Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->makeObject(n3));
-
-    for (int i = 0; i < str.size(); ++i) {
-        str[i]->number_in_history = i;
-        str[i]->GetInformation(configs);
+    print.initialization({n1, n2, n3});
+    for (size_t i = 0; i < str.size(); ++i) {
+        str[i]->assign_number(i);
+        str[i]->MaybeLoadInfo(configs);
     }
     score = {0, 0, 0};
 }
 
-void PlayMode::PrintRes(const std::vector<char> &choice, const std::vector<int> &res) {
-    std::cout.setf(std::ios::fixed);
-    std::cout << std::setw(20) << std::left << "Strategy's name"
-              << std::setw(10) << "score" << std::endl;
-    for (int i = 0; i < str.size(); ++i) {
-        std::cout << std::setw(20) << std::left << str[i]->name()
-                  << std::setw(10) << score[i] << std::endl;
-    }
-    int best = *std::max_element(score.begin(), score.end());
-    for (int i = 0; i < str.size(); ++i) {
-        if (score[i] == best) {
-            std::cout << str[i]->name() << " ";
-        }
-    }
-    std::cout << "WIN with score " << best << std::endl
-              << std::endl;
-}

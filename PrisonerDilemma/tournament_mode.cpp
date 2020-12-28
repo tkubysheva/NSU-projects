@@ -28,23 +28,22 @@ void Tournament::play( Gamer gamer) {
             auto k_n3 = j_n2;
             k_n3++;
             for (int k = j + 1; k < names_.size(); ++k, ++k_n3) {
-                std::cout << "         TOUR #" << ++tour_count << std::endl;
                 std::set<std::string> tour_names({*i_n1, *j_n2, *k_n3});
-                tour(tour_names);
+                tour(++tour_count, tour_names);
             }
         }
     }
-    PrintTournamentRes();
+    print.tournament(tournament_score);
 }
 
-void Tournament::tour(std::set<std::string> &names) {
+void Tournament::tour(int tour_count, std::set<std::string> &names) {
     Initial(names, configs);
     std::vector<std::vector<char>> history;
-    history.push_back({'C', 'C', 'C'});
+    history.push_back({COOPERATE, COOPERATE, COOPERATE});
     for (int i = 0; i < steps; ++i)
         OneGame();
     UpdateScore();
-    PrintRes();
+    print.tour(tour_count);
 }
 
 void Tournament::UpdateScore() {
@@ -53,20 +52,3 @@ void Tournament::UpdateScore() {
     tournament_score[str[2]->name()] += score[2];
 }
 
-
-void Tournament::PrintTournamentRes() {
-    std::string n;
-    int max = 0;
-    std::cout.setf(std::ios::fixed);
-    std::cout << std::setw(20) << "         RESULTS" << std::endl;
-    std::cout << std::setw(20) << std::left << "Strategy's name" << std::setw(10) << "score" << std::endl;
-    for (const auto &i : tournament_score) {
-        std::cout << std::setw(20) << std::left << i.first << std::setw(10) << i.second << std::endl;
-        if (i.second > max) {
-            max = i.second;
-            n = i.first;
-        }
-    }
-    std::cout << std::endl
-              << n << " TOTAL WIN" << std::endl;
-}

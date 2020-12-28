@@ -15,10 +15,10 @@ Strategy *createRand() {
     return new Rand;
 }
 
-char Rand::choice(std::vector<std::vector<char>> &) {
+CHOICE Rand::choice(std::vector<std::vector<CHOICE>> &) {
     if (rand() % 2 == 1)
-        return 'D';
-    return 'C';
+        return DEFECT;
+    return COOPERATE;
 }
 
 std::string Rand::name() {

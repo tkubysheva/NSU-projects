@@ -14,8 +14,8 @@ Strategy* createAllD(){
     return new AllD;
 }
 
-char AllD::choice(std::vector<std::vector<char>>&){
-    return 'D';
+CHOICE AllD::choice(std::vector<std::vector<CHOICE>>&){
+    return DEFECT;
 }
 
 std::string AllD::name(){

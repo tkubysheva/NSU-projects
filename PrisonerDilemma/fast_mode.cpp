@@ -15,8 +15,8 @@ namespace {
 
 void Fast::play(Gamer gamer) {
     Initial(names_, configs);
-    for (int i = 0; i < steps; ++i) {
+    for (size_t i = 0; i < steps; ++i) {
         OneGame();
     }
-    PrintRes();
+    print.fast();
 }

@@ -16,8 +16,8 @@ namespace {
 
 
 
-char PTF::choice(std::vector<std::vector<char>> &) {
-    return 'C';
+CHOICE PTF::choice(std::vector<std::vector<CHOICE>> &) {
+    return COOPERATE;
 }
 
 std::string PTF::name() {
