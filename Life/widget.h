@@ -21,9 +21,11 @@ public:
 
 private slots:
     void load_clicked();
+    void change_rules();
 
 private:
     Ui::Widget *ui;
-    field *Field_;
+    Field *Field_;
+    void rules_update(const std::vector<int> &b, const std::vector<int> &s);
 };
 #endif// WIDGET_H

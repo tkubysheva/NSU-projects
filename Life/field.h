@@ -2,6 +2,7 @@
 #define FIELD_H
 
 #include "game.h"
+#include "saveload.h"
 #include <QTimer>
 #include <QWidget>
 
@@ -12,13 +13,7 @@ namespace Ui {
 QT_END_NAMESPACE
 
 
-struct load_data {
-    bool success;
-    int x, y;
-    std::string r;
-};
-
-class field : public QWidget {
+class Field : public QWidget {
     Q_OBJECT
 public slots:
     void on_clear_clicked();
@@ -28,17 +23,19 @@ public slots:
     void on_save_clicked();
     void on_change_size_x_clicked(int x);
     void on_change_size_y_clicked(int x);
-    void change_rules(QString);
+
     void generation_next_field();
 
 public:
-    field(QWidget *parent = nullptr);
+    Field(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent *paint) override;
     void mousePressEvent(QMouseEvent *clik) override;
     void mouseMoveEvent(QMouseEvent *clik) override;
     load_data load_clicked();
+    void change_rules(std::vector<int> &b, std::vector<int> &s);
 
 private:
+    SaveLoad file_helper;
     Game game_;
     void PaintField(QPainter &p);
     void PaintCells(QPainter &p);
@@ -47,6 +44,7 @@ private:
     QColor CellColor = "#800080";
     double cell_size_height();
     double cell_size_width();
+    bool change_rules_file(const std::string &rules);
     void wrong_rules();
     void wrong_file();
     void clear_file(std::string filename);
