@@ -3,21 +3,21 @@
 #include <iostream>
 
 namespace {
-    bool g(){
-        Factory<Strategy, std::string, Strategy*(*)()>::getInstance()->addCreator("all-defect", createAllD);
+    bool g() {
+        Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->addCreator("all-defect", createAllD);
         return true;
     }
     static bool b = g();
-}
+}// namespace
 
-Strategy* createAllD(){
+Strategy *createAllD() {
     return new AllD;
 }
 
-CHOICE AllD::choice(std::vector<std::vector<CHOICE>>&){
+CHOICE AllD::choice(std::vector<std::vector<CHOICE>> &) {
     return DEFECT;
 }
 
-std::string AllD::name(){
+std::string AllD::name() {
     return "all-defect";
 }

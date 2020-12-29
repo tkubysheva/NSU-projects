@@ -1,10 +1,10 @@
 #pragma once
 #include "mode.h"
+#include "typenames.h"
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
-#include "typenames.h"
 
 
 class Tournament : public PlayMode {

@@ -43,4 +43,3 @@ void PlayMode::Initial(const std::set<std::string> &names, const std::string &co
     }
     score = {0, 0, 0};
 }
-

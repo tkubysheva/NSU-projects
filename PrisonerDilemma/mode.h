@@ -1,8 +1,8 @@
 #pragma once
 #include "gamer.h"
+#include "print_results.h"
 #include "strategy.h"
 #include "typenames.h"
-#include "print_results.h"
 #include <iostream>
 #include <map>
 #include <memory>

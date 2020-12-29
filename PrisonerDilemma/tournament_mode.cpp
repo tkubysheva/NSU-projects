@@ -12,11 +12,10 @@ namespace {
         return true;
     }
     static bool d = gen();
-}
+}// namespace
 
 
-
-void Tournament::play( Gamer gamer) {
+void Tournament::play(Gamer gamer) {
     for (const auto &i : names_)
         tournament_score[i] = 0;
     auto i_n1 = names_.begin();
@@ -51,4 +50,3 @@ void Tournament::UpdateScore() {
     tournament_score[str[1]->name()] += score[1];
     tournament_score[str[2]->name()] += score[2];
 }
-

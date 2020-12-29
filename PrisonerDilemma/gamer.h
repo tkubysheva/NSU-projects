@@ -4,12 +4,12 @@ struct Gamer {
     bool Test = false;
     std::vector<char> Button;
     int count = 0;
-    bool Exit(){
+    bool Exit() {
         if (Test) {
             count++;
             return (Button[count - 1] == 'q');
         }
-        if(count == 0){
+        if (count == 0) {
             count++;
             return false;
         }

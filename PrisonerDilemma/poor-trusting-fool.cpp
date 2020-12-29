@@ -15,7 +15,6 @@ namespace {
 }// namespace
 
 
-
 CHOICE PTF::choice(std::vector<std::vector<CHOICE>> &) {
     return COOPERATE;
 }

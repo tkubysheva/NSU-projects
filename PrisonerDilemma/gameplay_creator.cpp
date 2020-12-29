@@ -59,6 +59,6 @@ Gameplay::Gameplay(int argc, char **argv) {
         throw std::runtime_error("INVALID NUMBER OF STRATEGY NAMES");
     }
     if (mode == "detailed" and names.size() > 3) {
-        throw std::runtime_error("DETAILED MOD IS POSSIBLE ONLY FOR THREE PLAYERS" );
+        throw std::runtime_error("DETAILED MOD IS POSSIBLE ONLY FOR THREE PLAYERS");
     }
 }

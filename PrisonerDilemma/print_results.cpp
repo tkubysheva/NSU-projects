@@ -1,10 +1,10 @@
 #include "print_results.h"
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
-#include <algorithm>
 
-std::string PrintResults::what_choice(CHOICE c){
-    return c?"defect":"cooperate";
+std::string PrintResults::what_choice(CHOICE c) {
+    return c ? "defect" : "cooperate";
 }
 
 void PrintResults::detailed(const std::vector<CHOICE> &choice, const std::vector<int> &res) {
@@ -42,7 +42,7 @@ void PrintResults::fast() {
     std::cout << "WIN with score " << best << std::endl
               << std::endl;
 }
-void PrintResults::tournament(const std::map<std::string, int>& tournament_score) {
+void PrintResults::tournament(const std::map<std::string, int> &tournament_score) {
     std::string n;
     int max = 0;
     std::cout.setf(std::ios::fixed);

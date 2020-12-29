@@ -14,7 +14,6 @@ namespace {
 }// namespace
 
 
-
 CHOICE STFT::choice(std::vector<std::vector<CHOICE>> &h) {
     int s = h.size();
     if ((h[s - 1][0] == DEFECT or number_in_history == 0) and
