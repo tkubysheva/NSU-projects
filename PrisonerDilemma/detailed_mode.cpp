@@ -1,6 +1,5 @@
 #include "detailed_mode.h"
 #include "factory.h"
-#include <iomanip>
 
 namespace {
     PlayMode *createDetailedMode() {

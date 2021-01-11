@@ -16,7 +16,6 @@ private:
     std::string configs_dir;
     MATRIX_ matrix;
     std::set<std::string> names;
-
 public:
     Gameplay() = delete;
     Gameplay(int argc, char *argv[]);

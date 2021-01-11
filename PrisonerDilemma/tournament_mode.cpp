@@ -1,7 +1,5 @@
 #include "tournament_mode.h"
 #include "factory.h"
-#include <iomanip>
-
 namespace {
     PlayMode *createTournamentMode() {
         return new Tournament;

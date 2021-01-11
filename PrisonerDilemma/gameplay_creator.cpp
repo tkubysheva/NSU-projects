@@ -2,7 +2,7 @@
 #include "factory.h"
 #include <memory>
 #include <sstream>
-
+#include "create_strategies.h"
 template<typename T>
 T convert_(char *arg) {
     std::stringstream convert(arg);
@@ -11,7 +11,9 @@ T convert_(char *arg) {
     return n;
 }
 
+
 std::unique_ptr<PlayMode> Gameplay::creator() {
+    sign_up_for_strategies();
     std::unique_ptr<PlayMode> game(Factory<PlayMode, std::string,
                                            PlayMode *(*) ()>::getInstance()
                                            ->makeObject(mode));

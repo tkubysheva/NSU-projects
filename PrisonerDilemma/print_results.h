@@ -4,10 +4,10 @@
 #pragma once
 #include "typenames.h"
 class PrintResults {
+private:
     std::vector<std::string> str;
     std::vector<size_t> res_score;
     std::string what_choice(CHOICE c);
-
 public:
     void tour(int tour_count);
     void tournament(const std::map<std::string, int> &tournament_score);

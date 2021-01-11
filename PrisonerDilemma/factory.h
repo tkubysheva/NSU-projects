@@ -3,7 +3,6 @@
 #include <iostream>
 #include <unordered_map>
 
-
 template<class Product, class id>
 struct DefaultErrorPolicy {
     static Product *IdNotFound(const id &name) {

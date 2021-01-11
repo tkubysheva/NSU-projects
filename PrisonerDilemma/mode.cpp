@@ -2,7 +2,6 @@
 #include "factory.h"
 #include "table.h"
 #include <algorithm>
-#include <iomanip>
 #include <iostream>
 
 void PlayMode::InitialGame(const std::string &matr_conf, const size_t &steps_, const std::set<std::string> &names, const std::string &str_conf) {
