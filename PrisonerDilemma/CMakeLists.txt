@@ -70,39 +70,39 @@ file(GLOB
 file(GLOB
         H_SOURCES "*.h")
 
-add_executable(${PROJECT_NAME} ${CPP_SOURCES} ${H_SOURCES})
+add_executable(${PROJECT_NAME} ${CPP_SOURCES} ${H_SOURCES} tests.cpp)
 
 # link the new library target with the binary target
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_rand::random
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_rand::random
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_alld::all-defect
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_chch::change-choice
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_forgrev::forgive-revenge
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_ptf::poor-trusting-fool
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_stft::soft-tit-for-tat
         )
 target_link_libraries( ${PROJECT_NAME}
-        PRIVATE
+
         ${PROJECT_NAME}_ttft::tough-tit-for-tat
         )
 
@@ -110,4 +110,4 @@ target_link_libraries( ${PROJECT_NAME}
 ADD_SUBDIRECTORY (googletest)
 include_directories(googletest/googletest/include)
 
-target_link_libraries(gtest gtest_main)
+target_link_libraries(${PROJECT_NAME} gtest gtest_main)
