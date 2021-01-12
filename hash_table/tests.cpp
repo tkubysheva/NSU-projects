@@ -1,9 +1,20 @@
 #include "table.h"
 #include "gtest/gtest.h"
 
+typedef std::string Key;
+
+struct Value {
+    unsigned age = 0;
+    unsigned weight = 0;
+    friend bool operator==(const Value &a, const Value &b) {
+        return a.age == b.age && a.weight == b.weight;
+    }
+};
+
+
     class Hashtable : public ::testing::Test {
     protected:
-        HashTable p, h;
+        HashTable<Key, Value> p, h;
     };
 
     TEST_F(Hashtable, insert_test) {
