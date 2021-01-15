@@ -25,6 +25,7 @@ public:
     }
     void addCreator(const id name, creator_t c) {
         creators_[name] = c;
+        std::cout << name << " include!"<<std::endl;
     }
 
     static Factory *getInstance() {

@@ -1,6 +1,11 @@
 #include "soft-tit-for-tat.h"
 #include <iostream>
-
+Strategy *create_str(){
+    return new STFT;
+}
+void create(){
+    Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->addCreator("soft-tit-for-tat", create_str);
+}
 CHOICE STFT::choice(std::vector<std::vector<CHOICE>> &h) {
     int s = h.size();
     if ((h[s - 1][0] == DEFECT or number_in_history == 0) and

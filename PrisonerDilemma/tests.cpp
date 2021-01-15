@@ -3,12 +3,6 @@
 #include "factory.h"
 #include "gameplay_creator.h"
 #include <memory>
-#include "strategies/all-defect.h"
-#include "strategies/change-choice.h"
-#include "strategies/forgive-revenge.h"
-#include "strategies/poor-trusting-fool.h"
-#include "strategies/soft-tit-for-tat.h"
-#include "strategies/tough-tit-for-tat.h"
 
 class FirstTest : public ::testing::Test {
 protected:
@@ -44,7 +38,7 @@ TEST_F(FirstTest, trow) {
     EXPECT_NO_THROW(Gameplay m8(4, argv_5));
 }
 
-
+/*
 TEST_F(FirstTest, strategy) {
 
     std::vector<std::vector<CHOICE>> history;
@@ -113,3 +107,4 @@ TEST_F(FirstTest, strategy) {
 
     }
 }
+*/

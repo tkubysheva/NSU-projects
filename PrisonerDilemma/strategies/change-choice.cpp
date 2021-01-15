@@ -2,7 +2,12 @@
 #include <fstream>
 #include <iostream>
 
-
+Strategy *create_str(){
+    return new CChoice;
+}
+void create(){
+    Factory<Strategy, std::string, Strategy *(*) ()>::getInstance()->addCreator("change-choice", create_str);
+}
 CHOICE CChoice::choice(std::vector<std::vector<CHOICE>> &history) {
     if (((history.size() - 1) / cchoice_number) % 2 != 0)
         return DEFECT;
