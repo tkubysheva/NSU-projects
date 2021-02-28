@@ -45,6 +45,7 @@ public class Interpreter {
                     throw new IOException("File is larger then needed");
                 }
             }
+            Reflection.Loader();
         } catch (IOException error) {
             System.out.println(error.getMessage());
         }
