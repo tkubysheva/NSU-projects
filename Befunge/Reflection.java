@@ -52,7 +52,7 @@ public class Reflection {
             for (String key : commandName.stringPropertyNames()) {
                 String value = commandName.getProperty(key);
                 t++;
-                System.out.println(t+". Class " +key+" = "+ value);
+                //System.out.println(t+". Class " +key+" = "+ value);
             }
             i.close();
         } catch(Exception e) {
