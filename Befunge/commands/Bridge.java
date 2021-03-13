@@ -2,9 +2,16 @@ package commands;
 
 import programContent.Content;
 
+/**
+ * The command that makes the next command to be skipped
+ */
 public class Bridge extends Command{
     @Override
-    public void Action(Content content) {
+    /**
+     *
+     * @param content {@link programContent.Content}
+     */
+    protected void action(Content content) {
         content.bridge = true;
     }
 }

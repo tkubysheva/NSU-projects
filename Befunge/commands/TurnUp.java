@@ -1,10 +1,17 @@
 package commands;
-import programContent.DIR;
 import programContent.Content;
-
+import programContent.DIRECTION;
+/**
+ * The command that turns the direction of the movement
+ * to the up
+ */
 public class TurnUp extends Command{
+    /**
+     *
+     * @param content {@link programContent.Content}
+     */
     @Override
-    public void Action(Content content) {
-        content.direction = DIR.UP;
+    protected void action(Content content) {
+        content.direction = DIRECTION.UP;
     }
 }

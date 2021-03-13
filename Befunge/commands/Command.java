@@ -1,13 +1,25 @@
 package commands;
-import java.util.Stack;
 import programContent.Content;
 
+/**
+ * Abstract command class
+ */
 public abstract class Command {
-    protected int pop(Stack<Integer> s){
-        if(!s.empty()){
-            return s.pop();
+    /**
+     *Function that performs command action
+     * @param content {@link programContent.Content}
+     */
+    protected abstract void action(Content content);
+
+    /**
+     *The function that trigger the action
+     * @param content {@link programContent.Content}
+     */
+    public void execute(Content content){
+        if(content.bridge){
+            content.bridge = false;
+            return;
         }
-        return 0;
+        action(content);
     }
-    public abstract void Action(Content content);
 }

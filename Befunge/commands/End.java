@@ -1,10 +1,17 @@
 package commands;
-import programContent.DIR;
+import programContent.DIRECTION;
 import programContent.Content;
 
+/**
+ * The command that stops the program
+ */
 public class End extends Command{
+    /**
+     *
+     * @param content {@link programContent.Content}
+     */
     @Override
-    public void Action(Content content) {
-        content.direction = DIR.END;
+    protected void action(Content content) {
+        content.direction = DIRECTION.END;
     }
 }

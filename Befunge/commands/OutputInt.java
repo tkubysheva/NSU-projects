@@ -2,10 +2,17 @@ package commands;
 
 import programContent.Content;
 
+/**
+ * The command that pops an item off the top of the stack
+ * and prints its numeric representation
+ */
 public class OutputInt extends Command{
-
+    /**
+     *
+     * @param content {@link programContent.Content}
+     */
     @Override
-    public void Action(Content content) {
+    protected void action(Content content) {
         System.out.print(content.stack.pop());
     }
 }

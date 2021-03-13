@@ -1,9 +1,15 @@
 package commands;
 import programContent.Content;
-
+/**
+ * The command that pushed number from the field onto the stack
+ */
 public class InStack extends Command{
+    /**
+     *
+     * @param content {@link programContent.Content}
+     */
     @Override
-    public void Action(Content content) {
+    protected void action(Content content) {
         if(Character.isLetter(content.inStack)){
             content.stack.push((int) content.inStack);
         }
