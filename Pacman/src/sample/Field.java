@@ -11,6 +11,9 @@ public class Field {
 
     private byte field[] = new byte[field_x*field_y];
     public Field() {
+        resetField();
+    }
+    public void resetField(){
         try (FileInputStream f = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\sample\\field.txt")) {
             byte[] objects = new byte[f.available()];
             f.read(objects, 0, f.available());
@@ -32,19 +35,42 @@ public class Field {
                     c++;
                 }
             }
-            pacmanRotation_x = pacmanRotation%field_x;
+            pacmanRotation_x = pacmanRotation%field_x - 1;
             pacmanRotation_y = pacmanRotation/field_x;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
     public int getCountOfDots(){
         return countOfDots;
     }
-
     public byte[] getObjects() {
         return field;
+    }
+    public boolean checkMove(Direction d){
+        switch (d){
+            case UP -> {
+                if(field[pacmanRotation_x+((pacmanRotation_y+field_y-1)%field_y)*field_x] != 'w'){
+                    return true;
+                }
+            }
+            case DOWN -> {
+                if(field[pacmanRotation_x+((pacmanRotation_y+1)%field_y)*field_x] != 'w'){
+                    return true;
+                }
+            }
+            case LEFT -> {
+                if(field[(pacmanRotation_x+field_x -1)%field_x+pacmanRotation_y*field_x] != 'w'){
+                    return true;
+                }
+            }
+            case RIGHT -> {
+                if(field[(pacmanRotation_x+1)%field_x+pacmanRotation_y*field_x] != 'w'){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean movePacman(Direction d){
@@ -84,20 +110,5 @@ public class Field {
         }
         field[pacmanRotation_x+pacmanRotation_y*field_x] = 'm';
         return true;
-    }
-
-    public int getPacmanRotation_x() {
-        return pacmanRotation_x;
-    }
-    public int getPacmanRotation_y() {
-        return pacmanRotation_y;
-    }
-
-    public int getField_x() {
-        return field_x;
-    }
-
-    public int getField_y() {
-        return field_y;
     }
 }

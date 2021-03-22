@@ -11,10 +11,8 @@ public class Pacman {
     private Image pacmanImageDown;
     private Direction direction = Direction.STOP;
     private Direction nextDirection = Direction.STOP;
-    int x, y;
-    public Pacman(int x, int y){
-        this.x = x;
-        this.y = y;
+
+    public Pacman(){
         try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\pacmanD.png")) {
             pacmanImageDown = new Image(inputstream);
         } catch (Exception e) {
@@ -34,6 +32,11 @@ public class Pacman {
             System.out.println(e.getMessage());
         }
     }
+
+    public Direction getNextDirection() {
+        return nextDirection;
+    }
+
     public void setNextDirection(Direction nextDirection) {
         this.nextDirection = nextDirection;
     }
