@@ -56,7 +56,7 @@ public class Controller {
                     System.out.println("I CAN'T MOVE((((((");
                 }
                 });
-            if(field.getCountOfDots() == 20){
+            if(field.getCountOfDots() == 0){
                 pacman.setNextDirection(Direction.STOP);
                 pacman.setDirection();
                 visual.GameOver();
