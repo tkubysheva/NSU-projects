@@ -4,13 +4,11 @@ import javafx.scene.image.Image;
 
 import java.io.FileInputStream;
 
-public class Pacman {
+public class Pacman extends Entity {
     private Image pacmanImageLeft;
     private Image pacmanImageRight;
     private Image pacmanImageUp;
     private Image pacmanImageDown;
-    private Direction direction = Direction.STOP;
-    private Direction nextDirection = Direction.STOP;
 
     public Pacman(){
         try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\pacmanD.png")) {
@@ -33,23 +31,8 @@ public class Pacman {
         }
     }
 
-    public Direction getNextDirection() {
-        return nextDirection;
-    }
-
-    public void setNextDirection(Direction nextDirection) {
-        this.nextDirection = nextDirection;
-    }
-
-    public void setDirection() {
-        this.direction = this.nextDirection;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public Image getPacmanImage(){
+    @Override
+    public Image getImage(){
         switch (direction){
             case UP -> {
                 return pacmanImageUp;

@@ -14,7 +14,7 @@
             <Image url="@../images/gameOver.png" />
          </image>
       </ImageView>
-      <Label layoutX="199.0" layoutY="188.0" text="YOU WIN" textFill="#f0f34c">
+      <Label fx:id="winOrLose" layoutX="199.0" layoutY="188.0" text="YOU WIN" textFill="#f0f34c">
          <font>
             <Font name="Comic Sans MS" size="37.0" />
          </font>

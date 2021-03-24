@@ -2,6 +2,7 @@ package sample;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 
@@ -14,6 +15,9 @@ public class ControllerGameOver {
 
     @FXML
     private Button repeatGameButton;
+
+    @FXML
+    private Label winOrLose;
 
     @FXML
     void initialize() {

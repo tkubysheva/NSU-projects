@@ -27,20 +27,20 @@ public class Visual {
     Canvas canvas = new Canvas(600, 600);
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
-    public Visual(byte objects[], Image pacmanImage) {
+    public Visual(byte objects[], Image pacmanImage, Image ghostImage) {
         stage.setTitle("PACMAN!!!");
         InputStream iconStream = getClass().getResourceAsStream("/images/splash screen.png");
         Image image = new Image(iconStream);
         stage.getIcons().add(image);
         stage.setResizable(false);
-        paintField(objects, pacmanImage);
+        paintField(objects, pacmanImage, ghostImage);
         root.getChildren().add(canvas);
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
-    public void GameOver() {
+    public void GameOver(boolean isWinner) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("gameOver.fxml"));
@@ -49,7 +49,12 @@ public class Visual {
             Stage stageOver = new Stage();
             stageOver.initModality(Modality.WINDOW_MODAL);
             stageOver.initOwner(stage);
-            stageOver.setTitle("New Window");
+            if(isWinner) {
+                stageOver.setTitle("YOU WIN!!!");
+            }
+            else{
+                stageOver.setTitle("YOU LOSE((((");
+            }
             stageOver.setScene(sceneOver);
             stageOver.show();
         } catch (Exception e) {
@@ -66,12 +71,12 @@ public class Visual {
         return stage;
     }
 
-    public void repaint(byte[] objects, Image pacmanImage) {
-        paintField(objects, pacmanImage);
+    public void repaint(byte[] objects, Image pacmanImage, Image ghostImage) {
+        paintField(objects, pacmanImage, ghostImage);
         stage.setScene(scene);
     }
 
-    private void paintField(byte[] objects, Image pacmanImage) {
+    private void paintField(byte[] objects, Image pacmanImage, Image ghostImage) {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
         double dx = gc.getCanvas().getWidth() / 27;
@@ -83,8 +88,16 @@ public class Visual {
                     gc.setFill(Color.BLUE);
                     gc.fillRect(x * dx, y * dy, dx, dy);
                     x++;
-                } else if (p == 'p') {
+                }
+                else if (p == 'W') {
+                    gc.setFill(Color.RED);
+                    gc.fillRect(x * dx, y * dy, dx, dy);
+                    x++;
+                }else if (p == 'p') {
                     gc.drawImage(dot.getDotImage(), x * dx + dx / 3, y * dy + dy / 3, dx / 3, dy / 3);
+                    x++;
+                } else if (p == 'A') {
+                    gc.drawImage(ghostImage, x * dx, y * dy, dx, dy);
                     x++;
                 } else if (p == 'o') {
                     x++;
