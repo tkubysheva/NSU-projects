@@ -3,10 +3,18 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 
 public class ControllerGameOver {
+
+    public TextArea nameField;
     @FXML
     private Button nextGameButton;
 
@@ -15,9 +23,9 @@ public class ControllerGameOver {
 
     @FXML
     private Button repeatGameButton;
-
     @FXML
-    private Label winOrLose;
+    private Button nameWrited;
+
 
     @FXML
     void initialize() {
@@ -29,12 +37,11 @@ public class ControllerGameOver {
             stage_.close();
         });
         repeatGameButton.setOnMouseClicked(event -> {
-            /*
-            closeWindow(repeatGameButton);
-            field.resetField();
-            startGame();
-
-             */
+            ////////////
+        });
+        nameWrited.setOnMouseClicked(event ->{
+            String name = nameField.getText();
+            Scores.updateScore(name);
         });
     }
 }

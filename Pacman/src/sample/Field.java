@@ -3,54 +3,69 @@ package sample;
 import java.io.FileInputStream;
 
 public class Field {
-    private final int field_x = 27;
-    private final int field_y = 26;
-    private int pacmanRotation_x = 0;
-    private int pacmanRotation_y = 0;
-    private int ghostARotation_x = 0;
-    private int ghostARotation_y = 0;
-    private byte ghostACell = 'o';
-    private int countOfDots = 0;
 
-    private byte field[] = new byte[field_x*field_y];
-    public Field() {
-        resetField();
+    private final int field_x = 27;
+    private final int field_y = 28;
+    private int countOfDots = 0;
+    private boolean dotEaten = false;
+    private final Cell[] field_ = new Cell[field_x*field_y];
+    public Field(Entity pacman, Entity ghostA, Entity ghostB) {
+        resetField(pacman, ghostA, ghostB);
     }
-    public void resetField(){
+    public void resetField(Entity pacman, Entity ghostA, Entity ghostB){
         try (FileInputStream f = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\sample\\field.txt")) {
             byte[] objects = new byte[f.available()];
             f.read(objects, 0, f.available());
             int pacmanRotation = 0;
             int ghostARotation = 0;
+            int ghostBRotation = 0;
             int c = 0;
-            boolean iSeeAPacman = false;
-            boolean iSeeAGhostA = false;
             for(byte a: objects){
-                if(a == 'o'||a == 'p'||a=='w'||a == 'm' || a == 'W' || a == 'A') {
-                    field[c] = a;
-                    if(!iSeeAPacman) {
-                        pacmanRotation++;
+
+                switch (a){
+                    case('o')->{
+                        field_[c] = Cell.EMPTINESS;
+                        c++;
                     }
-                    if(!iSeeAGhostA) {
-                        ghostARotation++;
+                    case('w')->{
+                        field_[c] = Cell.WALL;
+                        c++;
                     }
-                    if (a == 'm') {
-                        iSeeAPacman = true;
-                    }
-                    if (a == 'A') {
-                        iSeeAGhostA = true;
-                    }
-                    if (a == 'p') {
+                    case('p')->{
+                        field_[c] = Cell.POINT;
                         countOfDots++;
+                        c++;
                     }
-                    c++;
+                    case('m')->{
+                        field_[c] = Cell.EMPTINESS;
+                        pacmanRotation = c;
+                        c++;
+                    }
+                    case('W')->{
+                        field_[c] = Cell.GHOST_WALL;
+                        c++;
+                    }
+                    case('A')->{
+                        field_[c] =Cell.EMPTINESS;
+                        ghostARotation = c;
+                        c++;
+                    }
+                    case('B')->{
+                        field_[c] =Cell.EMPTINESS;
+                        ghostBRotation = c;
+                        c++;
+                    }
                 }
             }
-            pacmanRotation_x = pacmanRotation%field_x - 1;
-            pacmanRotation_y = pacmanRotation/field_x;
+            pacman.setX(pacmanRotation%field_x);
+            pacman.setY(pacmanRotation/field_x);
 
-            ghostARotation_x = ghostARotation%field_x - 1;
-            ghostARotation_y = ghostARotation/field_x;
+            ghostA.setX(ghostARotation%field_x);
+            ghostA.setY(ghostARotation/field_x);
+
+            ghostB.setX(ghostBRotation%field_x);
+            ghostB.setY(ghostBRotation/field_x);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,143 +73,159 @@ public class Field {
     public int getCountOfDots(){
         return countOfDots;
     }
-    public byte[] getObjects() {
-        return field;
+
+    public int getField_y() {
+        return field_y;
     }
 
-    public boolean checkMovePacman(Direction d){
-        switch (d){
+    public int getField_x() {
+        return field_x;
+    }
+
+    public Cell[] getObjects() {
+        return field_;
+    }
+
+    public Cell checkCell(int x, int y){
+        if(x > field_x || x < 0){
+            x = (x + field_x)%field_x;
+        }
+        if(y > field_y || y < 0){
+            y = (y + field_y)%field_y;
+        }
+        return field_[x+field_x*y];
+    }
+
+    public boolean checkMovePacman(Entity pacman){
+        int pacmanRotation_x = pacman.getX();
+        int pacmanRotation_y = pacman.getY();
+        Cell b = Cell.EMPTINESS;
+        switch (pacman.getNextDirection()){
             case UP -> {
-                byte b = field[pacmanRotation_x+((pacmanRotation_y+field_y-1)%field_y)*field_x];
-                if(b != 'w' && b != 'W'){
+                b = field_[pacmanRotation_x+((pacmanRotation_y+field_y-1)%field_y)*field_x];
+
+            }
+            case DOWN -> {
+                b = field_[pacmanRotation_x+((pacmanRotation_y+1)%field_y)*field_x];
+
+            }
+            case LEFT -> {
+                b = field_[(pacmanRotation_x+field_x -1)%field_x+pacmanRotation_y*field_x];
+
+            }
+            case RIGHT -> {
+                b = field_[(pacmanRotation_x+1)%field_x+pacmanRotation_y*field_x];
+            }
+        }
+        return b != Cell.GHOST_WALL && b != Cell.WALL;
+    }
+
+    public boolean move(Entity entity){
+        int entityX = entity.getX();
+        int entityY = entity.getY();
+        switch (entity.getDirection()){
+            case UP -> {
+                if(field_[entityX+((entityY+field_y-1)%field_y)*field_x] == Cell.WALL){
+                    return false;
+                }
+                entity.setY((entityY+field_y-1)%field_y);
+
+            }
+            case DOWN -> {
+                if(field_[entityX+((entityY+1)%field_y)*field_x] == Cell.WALL){
+                    return false;
+                }
+                entity.setY((entityY+1)%field_y);
+            }
+            case LEFT -> {
+                if(field_[(entityX+field_x -1)%field_x+entityY*field_x] == Cell.WALL){
+                    return false;
+                }
+                entity.setX((entityX+field_x -1)%field_x);
+            }
+            case RIGHT -> {
+                if(field_[(entityX+1)%field_x+entityY*field_x] == Cell.WALL){
+                    return false;
+                }
+                entity.setX((entityX+1)%field_x);
+            }
+        }
+        if(entity.getClass() == Pacman.class) {
+            if (field_[entityX + entityY * field_x] == Cell.POINT) {
+                countOfDots--;
+                dotEaten = true;
+            }
+            field_[entityX + entityY * field_x] = Cell.EMPTINESS;
+        }
+        return true;
+    }
+    public boolean isDotEaten(){
+        return dotEaten;
+    }
+    public void dotUneaten(){
+        dotEaten = false;
+    }
+    public boolean checkMoveGhost(Entity ghost){
+        int ghostRotation_x = ghost.getX();
+        int ghostRotation_y = ghost.getY();
+        switch (ghost.getNextDirection()){
+            case UP -> {
+                if(field_[ghostRotation_x+((ghostRotation_y+field_y-1)%field_y)*field_x] != Cell.WALL){
                     return true;
                 }
             }
             case DOWN -> {
-                byte b = field[pacmanRotation_x+((pacmanRotation_y+1)%field_y)*field_x];
-                if(b!= 'w'&& b != 'W'){
+                if(field_[ghostRotation_x+((ghostRotation_y+1)%field_y)*field_x] != Cell.WALL){
                     return true;
                 }
             }
             case LEFT -> {
-                byte b = field[(pacmanRotation_x+field_x -1)%field_x+pacmanRotation_y*field_x];
-                if(b != 'w'&& b != 'W'){
+                if(field_[(ghostRotation_x+field_x -1)%field_x+ghostRotation_y*field_x] != Cell.WALL){
                     return true;
                 }
             }
             case RIGHT -> {
-                byte b = field[(pacmanRotation_x+1)%field_x+pacmanRotation_y*field_x];
-                if( b!= 'w'&& b != 'W'){
+                if(field_[(ghostRotation_x+1)%field_x+ghostRotation_y*field_x] != Cell.WALL){
                     return true;
                 }
             }
         }
         return false;
     }
-
-    public boolean movePacman(Direction d){
-        switch (d){
+/*
+    public boolean moveGhost(Entity ghost){
+        int ghostRotation_x = ghost.getX();
+        int ghostRotation_y = ghost.getY();
+        switch (ghost.getDirection()){
             case UP -> {
-                if(field[pacmanRotation_x+((pacmanRotation_y+field_y-1)%field_y)*field_x] == 'w'){
+                if(field_[ghostRotation_x+((ghostRotation_y+field_y-1)%field_y)*field_x] == Cell.WALL){
                     return false;
                 }
-                field[pacmanRotation_x+pacmanRotation_y*field_x] = 'o';
-                pacmanRotation_y = (pacmanRotation_y+field_y-1)%field_y;
+                ghost.setY((ghostRotation_y+field_y-1)%field_y);
 
             }
             case DOWN -> {
-                if(field[pacmanRotation_x+((pacmanRotation_y+1)%field_y)*field_x] == 'w'){
+                if(field_[ghostRotation_x+((ghostRotation_y+1)%field_y)*field_x] == Cell.WALL){
                     return false;
                 }
-                field[pacmanRotation_x+pacmanRotation_y*field_x] = 'o';
-                pacmanRotation_y = (pacmanRotation_y+1)%field_y;
+                ghost.setY((ghostRotation_y+1)%field_y);
             }
             case LEFT -> {
-                if(field[(pacmanRotation_x+field_x -1)%field_x+pacmanRotation_y*field_x] == 'w'){
+                if(field_[(ghostRotation_x+field_x -1)%field_x+ghostRotation_y*field_x] == Cell.WALL){
                     return false;
                 }
-                field[pacmanRotation_x+pacmanRotation_y*field_x] = 'o';
-                pacmanRotation_x = (pacmanRotation_x+field_x -1)%field_x;
+                ghost.setX((ghostRotation_x+field_x -1)%field_x);
             }
             case RIGHT -> {
-                if(field[(pacmanRotation_x+1)%field_x+pacmanRotation_y*field_x] == 'w'){
+                if(field_[(ghostRotation_x+1)%field_x+ghostRotation_y*field_x] == Cell.WALL){
                     return false;
                 }
-                field[pacmanRotation_x+pacmanRotation_y*field_x] = 'o';
-                pacmanRotation_x = (pacmanRotation_x+1)%field_x;
+                ghost.setX((ghostRotation_x+1)%field_x);
             }
         }
-        if(field[pacmanRotation_x+pacmanRotation_y*field_x] == 'p'){
-            countOfDots--;
-        }
-        field[pacmanRotation_x+pacmanRotation_y*field_x] = 'm';
         return true;
     }
-    public boolean checkMoveGhostA(Direction d){
-        switch (d){
-            case UP -> {
-                if(field[ghostARotation_x+((ghostARotation_y+field_y-1)%field_y)*field_x] != 'w'){
-                    return true;
-                }
-            }
-            case DOWN -> {
-                if(field[ghostARotation_x+((ghostARotation_y+1)%field_y)*field_x] != 'w'){
-                    return true;
-                }
-            }
-            case LEFT -> {
-                if(field[(ghostARotation_x+field_x -1)%field_x+ghostARotation_y*field_x] != 'w'){
-                    return true;
-                }
-            }
-            case RIGHT -> {
-                if(field[(ghostARotation_x+1)%field_x+ghostARotation_y*field_x] != 'w'){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
-    public boolean moveGhostA(Direction d){
-        switch (d){
-            case UP -> {
-                if(field[ghostARotation_x+((ghostARotation_y+field_y-1)%field_y)*field_x] == 'w'){
-                    return false;
-                }
-                field[ghostARotation_x+ghostARotation_y*field_x] = ghostACell;
-                ghostARotation_y = (ghostARotation_y+field_y-1)%field_y;
+ */
 
-            }
-            case DOWN -> {
-                if(field[ghostARotation_x+((ghostARotation_y+1)%field_y)*field_x] == 'w'){
-                    return false;
-                }
-                field[ghostARotation_x+ghostARotation_y*field_x] = ghostACell;
-                ghostARotation_y = (ghostARotation_y+1)%field_y;
-            }
-            case LEFT -> {
-                if(field[(ghostARotation_x+field_x -1)%field_x+ghostARotation_y*field_x] == 'w'){
-                    return false;
-                }
-                field[ghostARotation_x+ghostARotation_y*field_x] = ghostACell;
-                ghostARotation_x = (ghostARotation_x+field_x -1)%field_x;
-            }
-            case RIGHT -> {
-                if(field[(ghostARotation_x+1)%field_x+ghostARotation_y*field_x] == 'w'){
-                    return false;
-                }
-                field[ghostARotation_x+ghostARotation_y*field_x] = ghostACell;
-                ghostARotation_x = (ghostARotation_x+1)%field_x;
-            }
-        }
-        if(field[ghostARotation_x+ghostARotation_y*field_x] != 'A') {
-            ghostACell = field[ghostARotation_x + ghostARotation_y * field_x];
-        }
-        field[ghostARotation_x+ghostARotation_y*field_x] = 'A';
-        return true;
-    }
-    public boolean pacmanEaten(){
-        return ghostACell == 'm';
-    }
 }
