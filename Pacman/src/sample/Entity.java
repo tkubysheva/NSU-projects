@@ -5,10 +5,11 @@ import javafx.scene.image.Image;
 import java.util.Random;
 
 public class Entity {
-    public static class Point{
+    public static class Point {
         protected int x;
         protected int y;
     }
+
     protected Point point = new Point();
     protected Direction direction = Direction.STOP;
     protected Direction nextDirection = Direction.STOP;
@@ -49,13 +50,13 @@ public class Entity {
         return direction;
     }
 
-    public void randomNextDirection(Entity g){
+    public void randomNextDirection() {
         Random rand = new Random();
-        switch (rand.nextInt(4)){
-            case 0 -> g.setNextDirection(Direction.LEFT);
-            case 1 -> g.setNextDirection(Direction.UP);
-            case 2 -> g.setNextDirection(Direction.DOWN);
-            case 3 -> g.setNextDirection(Direction.RIGHT);
+        switch (rand.nextInt(4)) {
+            case 0 -> setNextDirection(Direction.LEFT);
+            case 1 -> setNextDirection(Direction.UP);
+            case 2 -> setNextDirection(Direction.DOWN);
+            case 3 -> setNextDirection(Direction.RIGHT);
         }
 
     }

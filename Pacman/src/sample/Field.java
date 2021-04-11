@@ -3,74 +3,90 @@ package sample;
 import java.io.FileInputStream;
 
 public class Field {
-
+    private String[] fieldPath = {"field1.txt", "field2.txt", "field2.txt", "field3.txt",
+            "field2.txt", "field3.txt", "field2.txt", "field1.txt", "field2.txt", "field3.txt"};
     private final int field_x = 27;
     private final int field_y = 28;
     private int countOfDots = 0;
     private boolean dotEaten = false;
-    private final Cell[] field_ = new Cell[field_x*field_y];
-    public Field(Entity pacman, Entity ghostA, Entity ghostB) {
-        resetField(pacman, ghostA, ghostB);
+    private final Cell[] field_ = new Cell[field_x * field_y];
+
+    public Field(int level, Pacman pacman, Ghost ghostA, Ghost ghostB, Ghost ghostC) {
+        resetField(level, pacman, ghostA, ghostB, ghostC);
     }
-    public void resetField(Entity pacman, Entity ghostA, Entity ghostB){
-        try (FileInputStream f = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\sample\\field.txt")) {
+
+    public void resetField(int level, Pacman pacman, Ghost ghostA, Ghost ghostB, Ghost ghostC) {
+        try (FileInputStream f = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\sample\\" + fieldPath[level])) {
             byte[] objects = new byte[f.available()];
             f.read(objects, 0, f.available());
             int pacmanRotation = 0;
             int ghostARotation = 0;
             int ghostBRotation = 0;
+            int ghostCRotation = 0;
             int c = 0;
-            for(byte a: objects){
+            for (byte a : objects) {
 
-                switch (a){
-                    case('o')->{
+                switch (a) {
+                    case ('o') -> {
                         field_[c] = Cell.EMPTINESS;
                         c++;
                     }
-                    case('w')->{
+                    case ('w') -> {
                         field_[c] = Cell.WALL;
                         c++;
                     }
-                    case('p')->{
+                    case ('p') -> {
                         field_[c] = Cell.POINT;
                         countOfDots++;
                         c++;
                     }
-                    case('m')->{
+                    case ('m') -> {
                         field_[c] = Cell.EMPTINESS;
                         pacmanRotation = c;
                         c++;
                     }
-                    case('W')->{
+                    case ('W') -> {
                         field_[c] = Cell.GHOST_WALL;
                         c++;
                     }
-                    case('A')->{
-                        field_[c] =Cell.EMPTINESS;
+                    case ('A') -> {
+                        field_[c] = Cell.EMPTINESS;
                         ghostARotation = c;
                         c++;
+                        ghostA.setExist(true);
                     }
-                    case('B')->{
-                        field_[c] =Cell.EMPTINESS;
+                    case ('B') -> {
+                        field_[c] = Cell.EMPTINESS;
                         ghostBRotation = c;
                         c++;
+                        ghostB.setExist(true);
+                    }
+                    case ('C') -> {
+                        field_[c] = Cell.EMPTINESS;
+                        ghostCRotation = c;
+                        c++;
+                        ghostC.setExist(true);
                     }
                 }
             }
-            pacman.setX(pacmanRotation%field_x);
-            pacman.setY(pacmanRotation/field_x);
+            pacman.setX(pacmanRotation % field_x);
+            pacman.setY(pacmanRotation / field_x);
 
-            ghostA.setX(ghostARotation%field_x);
-            ghostA.setY(ghostARotation/field_x);
+            ghostA.setX(ghostARotation % field_x);
+            ghostA.setY(ghostARotation / field_x);
 
-            ghostB.setX(ghostBRotation%field_x);
-            ghostB.setY(ghostBRotation/field_x);
+            ghostB.setX(ghostBRotation % field_x);
+            ghostB.setY(ghostBRotation / field_x);
+
+            ghostC.setX(ghostCRotation % field_x);
+            ghostC.setY(ghostCRotation / field_x);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public int getCountOfDots(){
+
+    public int getCountOfDots() {
         return countOfDots;
     }
 
@@ -86,71 +102,71 @@ public class Field {
         return field_;
     }
 
-    public Cell checkCell(int x, int y){
-        if(x > field_x || x < 0){
-            x = (x + field_x)%field_x;
+    public Cell checkCell(int x, int y) {
+        if (x > field_x || x < 0) {
+            x = (x + field_x) % field_x;
         }
-        if(y > field_y || y < 0){
-            y = (y + field_y)%field_y;
+        if (y > field_y || y < 0) {
+            y = (y + field_y) % field_y;
         }
-        return field_[x+field_x*y];
+        return field_[x + field_x * y];
     }
 
-    public boolean checkMovePacman(Entity pacman){
+    public boolean checkMovePacman(Entity pacman) {
         int pacmanRotation_x = pacman.getX();
         int pacmanRotation_y = pacman.getY();
         Cell b = Cell.EMPTINESS;
-        switch (pacman.getNextDirection()){
+        switch (pacman.getNextDirection()) {
             case UP -> {
-                b = field_[pacmanRotation_x+((pacmanRotation_y+field_y-1)%field_y)*field_x];
+                b = field_[pacmanRotation_x + ((pacmanRotation_y + field_y - 1) % field_y) * field_x];
 
             }
             case DOWN -> {
-                b = field_[pacmanRotation_x+((pacmanRotation_y+1)%field_y)*field_x];
+                b = field_[pacmanRotation_x + ((pacmanRotation_y + 1) % field_y) * field_x];
 
             }
             case LEFT -> {
-                b = field_[(pacmanRotation_x+field_x -1)%field_x+pacmanRotation_y*field_x];
+                b = field_[(pacmanRotation_x + field_x - 1) % field_x + pacmanRotation_y * field_x];
 
             }
             case RIGHT -> {
-                b = field_[(pacmanRotation_x+1)%field_x+pacmanRotation_y*field_x];
+                b = field_[(pacmanRotation_x + 1) % field_x + pacmanRotation_y * field_x];
             }
         }
         return b != Cell.GHOST_WALL && b != Cell.WALL;
     }
 
-    public boolean move(Entity entity){
+    public boolean move(Entity entity) {
         int entityX = entity.getX();
         int entityY = entity.getY();
-        switch (entity.getDirection()){
+        switch (entity.getDirection()) {
             case UP -> {
-                if(field_[entityX+((entityY+field_y-1)%field_y)*field_x] == Cell.WALL){
+                if (field_[entityX + ((entityY + field_y - 1) % field_y) * field_x] == Cell.WALL) {
                     return false;
                 }
-                entity.setY((entityY+field_y-1)%field_y);
+                entity.setY((entityY + field_y - 1) % field_y);
 
             }
             case DOWN -> {
-                if(field_[entityX+((entityY+1)%field_y)*field_x] == Cell.WALL){
+                if (field_[entityX + ((entityY + 1) % field_y) * field_x] == Cell.WALL) {
                     return false;
                 }
-                entity.setY((entityY+1)%field_y);
+                entity.setY((entityY + 1) % field_y);
             }
             case LEFT -> {
-                if(field_[(entityX+field_x -1)%field_x+entityY*field_x] == Cell.WALL){
+                if (field_[(entityX + field_x - 1) % field_x + entityY * field_x] == Cell.WALL) {
                     return false;
                 }
-                entity.setX((entityX+field_x -1)%field_x);
+                entity.setX((entityX + field_x - 1) % field_x);
             }
             case RIGHT -> {
-                if(field_[(entityX+1)%field_x+entityY*field_x] == Cell.WALL){
+                if (field_[(entityX + 1) % field_x + entityY * field_x] == Cell.WALL) {
                     return false;
                 }
-                entity.setX((entityX+1)%field_x);
+                entity.setX((entityX + 1) % field_x);
             }
         }
-        if(entity.getClass() == Pacman.class) {
+        if (entity.getClass() == Pacman.class) {
             if (field_[entityX + entityY * field_x] == Cell.POINT) {
                 countOfDots--;
                 dotEaten = true;
@@ -159,73 +175,40 @@ public class Field {
         }
         return true;
     }
-    public boolean isDotEaten(){
+
+    public boolean isDotEaten() {
         return dotEaten;
     }
-    public void dotUneaten(){
+
+    public void dotUneaten() {
         dotEaten = false;
     }
-    public boolean checkMoveGhost(Entity ghost){
+
+    public boolean checkMoveGhost(Entity ghost) {
         int ghostRotation_x = ghost.getX();
         int ghostRotation_y = ghost.getY();
-        switch (ghost.getNextDirection()){
+        switch (ghost.getNextDirection()) {
             case UP -> {
-                if(field_[ghostRotation_x+((ghostRotation_y+field_y-1)%field_y)*field_x] != Cell.WALL){
+                if (field_[ghostRotation_x + ((ghostRotation_y + field_y - 1) % field_y) * field_x] != Cell.WALL) {
                     return true;
                 }
             }
             case DOWN -> {
-                if(field_[ghostRotation_x+((ghostRotation_y+1)%field_y)*field_x] != Cell.WALL){
+                if (field_[ghostRotation_x + ((ghostRotation_y + 1) % field_y) * field_x] != Cell.WALL) {
                     return true;
                 }
             }
             case LEFT -> {
-                if(field_[(ghostRotation_x+field_x -1)%field_x+ghostRotation_y*field_x] != Cell.WALL){
+                if (field_[(ghostRotation_x + field_x - 1) % field_x + ghostRotation_y * field_x] != Cell.WALL) {
                     return true;
                 }
             }
             case RIGHT -> {
-                if(field_[(ghostRotation_x+1)%field_x+ghostRotation_y*field_x] != Cell.WALL){
+                if (field_[(ghostRotation_x + 1) % field_x + ghostRotation_y * field_x] != Cell.WALL) {
                     return true;
                 }
             }
         }
         return false;
     }
-/*
-    public boolean moveGhost(Entity ghost){
-        int ghostRotation_x = ghost.getX();
-        int ghostRotation_y = ghost.getY();
-        switch (ghost.getDirection()){
-            case UP -> {
-                if(field_[ghostRotation_x+((ghostRotation_y+field_y-1)%field_y)*field_x] == Cell.WALL){
-                    return false;
-                }
-                ghost.setY((ghostRotation_y+field_y-1)%field_y);
-
-            }
-            case DOWN -> {
-                if(field_[ghostRotation_x+((ghostRotation_y+1)%field_y)*field_x] == Cell.WALL){
-                    return false;
-                }
-                ghost.setY((ghostRotation_y+1)%field_y);
-            }
-            case LEFT -> {
-                if(field_[(ghostRotation_x+field_x -1)%field_x+ghostRotation_y*field_x] == Cell.WALL){
-                    return false;
-                }
-                ghost.setX((ghostRotation_x+field_x -1)%field_x);
-            }
-            case RIGHT -> {
-                if(field_[(ghostRotation_x+1)%field_x+ghostRotation_y*field_x] == Cell.WALL){
-                    return false;
-                }
-                ghost.setX((ghostRotation_x+1)%field_x);
-            }
-        }
-        return true;
-    }
-
- */
-
 }

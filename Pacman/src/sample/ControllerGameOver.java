@@ -6,15 +6,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-
-
 public class ControllerGameOver {
 
     public TextArea nameField;
+
     @FXML
     private Button nextGameButton;
 
@@ -23,25 +18,64 @@ public class ControllerGameOver {
 
     @FXML
     private Button repeatGameButton;
+
     @FXML
     private Button nameWrited;
 
+    @FXML
+    private Label scoreLabel;
+
+    private boolean isWinner;
+    private Controller controller;
+
+    public void setWinner(boolean w) {
+        isWinner = w;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
 
     @FXML
     void initialize() {
+        scoreLabel.setText(Scores.getCurrentScore().toString());
+
         exitGameButton.setOnMouseClicked((event) -> {
+            Scores.resetScore();
             Stage s = (Stage) exitGameButton.getScene().getWindow();
-            Stage owner =(Stage) s.getOwner();
+            Stage owner = (Stage) s.getOwner();
             owner.close();
             Stage stage_ = (Stage) exitGameButton.getScene().getWindow();
             stage_.close();
         });
         repeatGameButton.setOnMouseClicked(event -> {
-            ////////////
+            Scores.resetScore();
+            Stage s = (Stage) repeatGameButton.getScene().getWindow();
+            Stage owner = (Stage) s.getOwner();
+            owner.close();
+            Controller c = new Controller();
+            c.startGame();
         });
-        nameWrited.setOnMouseClicked(event ->{
+        nameWrited.setOnMouseClicked(event -> {
             String name = nameField.getText();
             Scores.updateScore(name);
+        });
+        nextGameButton.setOnMouseClicked(event -> {
+            if (isWinner) {
+                Stage s = (Stage) repeatGameButton.getScene().getWindow();
+                Stage owner = (Stage) s.getOwner();
+                owner.close();
+                if (controller.levelUp()) {
+                    controller.startGame();
+                }
+                /*
+                Controller c = new Controller();
+                if(c.levelUp()){
+                    c.startGame();
+                }
+
+                 */
+            }
         });
     }
 }

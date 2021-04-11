@@ -15,7 +15,10 @@ public class EntityImage {
     private Image dotImage;
     private Image ghostPinkImage;
     private Image ghostBlueImage;
-    public EntityImage(){
+    private Image ghostYellowImage;
+    private Image invulnerableImage;
+
+    public EntityImage() {
         try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\splash screen.png")) {
             splashScreen = new Image(inputstream);
         } catch (Exception e) {
@@ -35,11 +38,13 @@ public class EntityImage {
             pacmanImageLeft = new Image(inputstream);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\pacmanU.png")) {
+        }
+        try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\pacmanU.png")) {
             pacmanImageUp = new Image(inputstream);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\pacmanR.png")) {
+        }
+        try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\pacmanR.png")) {
             pacmanImageRight = new Image(inputstream);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -56,6 +61,16 @@ public class EntityImage {
         }
         try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\ghost3.png")) {
             ghostBlueImage = new Image(inputstream);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\ghost2.png")) {
+            ghostYellowImage = new Image(inputstream);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try (FileInputStream inputstream = new FileInputStream("C:\\Users\\hp\\IdeaProjects\\pacman\\src\\images\\red.png")) {
+            invulnerableImage = new Image(inputstream);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -79,10 +94,10 @@ public class EntityImage {
 
     public Image getPacmanImage(Direction direction) {
         pacmanClose = !pacmanClose;
-        if(pacmanClose){
+        if (pacmanClose) {
             return pacmanImageClose;
         }
-        switch (direction){
+        switch (direction) {
             case UP -> {
                 return pacmanImageUp;
             }
@@ -99,4 +114,11 @@ public class EntityImage {
         return pacmanImageRight;
     }
 
+    public Image getInvulnerableImage() {
+        return invulnerableImage;
+    }
+
+    public Image getGhostYellowImage() {
+        return ghostYellowImage;
+    }
 }

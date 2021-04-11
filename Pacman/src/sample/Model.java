@@ -1,72 +1,89 @@
 package sample;
 
 public class Model {
-    private final Entity pacman = new Pacman();
-    private final Entity ghostA = new PinkGhost();
-    private final Entity ghostB = new BlueGhost();
+    public Model(int level) {
+        field = new Field(level, pacman, ghostA, ghostB, ghostC);
+    }
+
+    private final Pacman pacman = new Pacman();
+    private final Ghost ghostA = new Ghost();
+    private final Ghost ghostB = new Ghost();
+    private final Ghost ghostC = new Ghost();
+
     private final Dot dot = new Dot();
-    private final Field field = new Field(pacman, ghostA, ghostB);
-    public Cell[] getObjects(){
+    private Field field;
+
+    public Cell[] getObjects() {
         return field.getObjects();
     }
-    public Entity getPacman() {
+
+    public Pacman getPacman() {
         return pacman;
     }
 
-    public Entity getPinkGhost() {
+    public Ghost getPinkGhost() {
         return ghostA;
     }
 
-    public Entity getBlueGhost() {
+    public Ghost getBlueGhost() {
         return ghostB;
     }
 
-    public int getCountOfDots(){
+    public Ghost getYellowGhost() {
+        return ghostC;
+    }
+
+    public int getCountOfDots() {
         return field.getCountOfDots();
     }
 
-    public boolean pacmanEaten(){
-        return (pacman.getX() == ghostA.getX() && pacman.getY() == ghostA.getY()) ||
-                (pacman.getX() == ghostB.getX() && pacman.getY() == ghostB.getY());
+    public boolean pacmanEaten() {
+        if ((pacman.getX() == ghostA.getX() && pacman.getY() == ghostA.getY()) ||
+                (pacman.getX() == ghostB.getX() && pacman.getY() == ghostB.getY()) ||
+                (pacman.getX() == ghostC.getX() && pacman.getY() == ghostC.getY())) {
+            return pacman.pacmanEaten();
+        }
+        return false;
     }
 
-    public void moveEntity(){
-        pacmanMove();
-        ghostsMove();
+    public boolean pacmanInvulnerable() {
+        return pacman.isInvulnerable();
     }
-    public int addScore(){
-        if(field.isDotEaten()){
+
+    public void pacmanNotInvulnerable() {
+        pacman.endInvulnerable();
+    }
+
+    public void moveEntity() {
+        move(pacman);
+        move(ghostA);
+        move(ghostB);
+        move(ghostC);
+    }
+
+    public int addScore() {
+        if (field.isDotEaten()) {
             field.dotUneaten();
             return dot.getAddScore();
         }
         return 0;
     }
 
-    private void pacmanMove(){
-        if(field.checkMovePacman(pacman)){
-            pacman.setDirection();
+    private void move(Entity entity) {
+        boolean checkMove;
+        if (entity.getClass() == Pacman.class) {
+            checkMove = field.checkMovePacman(entity);
+        } else {
+            checkMove = field.checkMoveGhost(entity);
         }
-        if(!field.move(pacman)){
-            pacman.setDirection();
+        if (checkMove) {
+            entity.setDirection();
         }
+        if (!field.move(entity)) {
+            entity.setDirection();
+        }
+
     }
-    private void ghostsMove(){
-        if(field.checkMoveGhost(ghostA)){
-            ghostA.setDirection();
-            ghostA.randomNextDirection(ghostA);
-        }
-        if(!field.move(ghostA)){
-            ghostA.setDirection();
-            ghostA.randomNextDirection(ghostA);
-        }
-        if(field.checkMoveGhost(ghostB)){
-            ghostB.setDirection();
-            ghostB.randomNextDirection(ghostB);
-        }
-        if(!field.move(ghostB)){
-            ghostB.setDirection();
-            ghostB.randomNextDirection(ghostB);
-        }
-    }
+
 
 }
