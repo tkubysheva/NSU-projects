@@ -3,6 +3,7 @@ package sample;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+<<<<<<< HEAD
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -20,18 +21,35 @@ public class Controller {
     private final VisualOptions visualOptions = new VisualOptions();
     private Model model;
     private boolean isPause = false;
+=======
+import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
+
+import java.awt.*;
+import java.io.File;
+import java.io.PrintStream;
+
+
+public class Controller {
+    private Visual visual;
+    private final Model model = new Model();
+>>>>>>> 12886ea2dfc140b3c48ff99b293f2ef44b0cce4a
     @FXML
     private Button startButton;
     @FXML
     private Button exitButton;
     @FXML
     private Button showResultsButton;
+<<<<<<< HEAD
     @FXML
     private Button helpButton;
     @FXML
     private Button infoButton;
     @FXML
     private ComboBox chooseLevelBox;
+=======
+
+>>>>>>> 12886ea2dfc140b3c48ff99b293f2ef44b0cce4a
 
     public void closeWindow(Button b) {
         Stage stage_ = (Stage) b.getScene().getWindow();
@@ -52,16 +70,20 @@ public class Controller {
             else if(keyEvent.getCode() == KeyCode.LEFT){
                 model.getPacman().setNextDirection(Direction.LEFT);
             }
+<<<<<<< HEAD
             else if(keyEvent.getCode() == KeyCode.P){
                 isPause = true;
                 visual.pause();
             }
+=======
+>>>>>>> 12886ea2dfc140b3c48ff99b293f2ef44b0cce4a
             else{
                 System.out.println(keyEvent.getCode());
                 System.out.println("I CAN'T MOVE((((((");
             }
         });
     }
+<<<<<<< HEAD
     private long interval = 150_000_000L;
     private long lastTimerCall;
     private int counterInvulnerable = 0;
@@ -92,6 +114,20 @@ public class Controller {
                 Scores.addCurrentScore(model.addScore());
                 visual.repaint(model.getObjects(), model.getPacman(), model.getPinkGhost(),
                         model.getBlueGhost(), model.getYellowGhost());
+=======
+    private long lastTimerCall;
+    protected AnimationTimer at = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            if(model.pacmanEaten()){
+                endGame(false);
+            }
+            long interval = 150_000_000L;
+            if (now > lastTimerCall + interval) {
+                model.moveEntity();
+                Scores.setCurrentScore(model.addScore());
+                visual.repaint(model.getObjects(), model.getPacman(), model.getPinkGhost(), model.getBlueGhost());
+>>>>>>> 12886ea2dfc140b3c48ff99b293f2ef44b0cce4a
                 lastTimerCall = now;
             }
             onKeyPressed();
@@ -103,6 +139,7 @@ public class Controller {
 
     @FXML
     void initialize() {
+<<<<<<< HEAD
         AtomicInteger chosenLevel = new AtomicInteger();
         chooseLevelBox.getItems().removeAll(chooseLevelBox.getItems());
         chooseLevelBox.getItems().addAll("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
@@ -113,10 +150,13 @@ public class Controller {
                 chosenLevel.set(Integer.parseInt(i)  - 1);
         });
 
+=======
+>>>>>>> 12886ea2dfc140b3c48ff99b293f2ef44b0cce4a
         exitButton.setOnMouseClicked((event) -> closeWindow(exitButton));
 
         startButton.setOnMouseClicked((event) -> {
             closeWindow(startButton);
+<<<<<<< HEAD
             while(level != chosenLevel.get()){
                 levelUp();
             }
@@ -152,6 +192,31 @@ public class Controller {
     public void startGame() {
         model = new Model(level);
         visual = new Visual(model.getObjects(), model.getPacman(), model.getPinkGhost(), model.getBlueGhost(), model.getYellowGhost());
+=======
+            visual = new Visual(model.getObjects(), model.getPacman(), model.getPinkGhost(), model.getBlueGhost());
+            startGame();
+        });
+
+        showResultsButton.setOnMouseClicked((event) -> {
+            String resultsFilePath = "C:\\Users\\hp\\IdeaProjects\\pacman\\src\\sample\\results.txt";
+            try (PrintStream output = new PrintStream(resultsFilePath)) {
+                Scores.printScore(output);
+                File f = new File(resultsFilePath);
+                Desktop.getDesktop().open(f);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            });
+    }
+    private void endGame(boolean isWinner){
+        at.stop();
+        visual.GameOver(isWinner);
+
+    }
+    private void startGame() {
+>>>>>>> 12886ea2dfc140b3c48ff99b293f2ef44b0cce4a
         at.start();
     }
 }
