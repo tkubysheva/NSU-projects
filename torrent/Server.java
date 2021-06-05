@@ -23,7 +23,7 @@ public class Server {
         Selector selector = null;
         ServerSocket serverSocket = null;
         ByteBuffer buf = ByteBuffer.allocateDirect(1024);
-
+        Handshake handshake = new Handshake("", "");
         try {
             selector = Selector.open();
             ServerSocketChannel serverSocketChannel =
@@ -56,11 +56,32 @@ public class Server {
                             channel = socket.getChannel();
                             channel.configureBlocking(false);
                             channel.register(selector, SelectionKey.OP_READ);
+
+                            byte[] clientHandshake = new byte[68];
+                            boolean flagConnection = true;
+                            channel.read(ByteBuffer.wrap(clientHandshake));
+                            byte[] myHandshake = handshake.getHandshake();
+                            for (int i = 0; i < 68; ++i) {
+                                if (clientHandshake[i] != myHandshake[i]) {
+                                    System.out.println(clientHandshake[i] + " " + myHandshake[i]);
+                                    flagConnection = false;
+                                    break;
+                                }
+                            }
+
+
+                            if (flagConnection) {
+                                channel.write(ByteBuffer.wrap(myHandshake));
+                            } else {
+                                System.out.println("handshake wrong");
+                                channel.close();
+                                continue;
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                    if (selKey.isReadable() ) {
+                    if (selKey.isReadable()) {
                         SocketChannel socketChannel = (SocketChannel) selKey.channel();
                         buf.clear();
                         try {
