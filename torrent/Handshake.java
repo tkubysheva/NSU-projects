@@ -1,6 +1,8 @@
+
+
 public class Handshake {
     private byte[] handshakeInfo = new byte[68];
-    Handshake(String info_hash, String peer_id){
+    Handshake(byte[] info_hash, byte[] peer_id){
         handshakeInfo[0] = Byte.parseByte("19");
         String c = "BitTorrent Protocol";
         int i = 1;
@@ -12,18 +14,18 @@ public class Handshake {
             handshakeInfo[j] = ' ';
         }
         i = 28;
-        if(info_hash.isEmpty()){
-            info_hash = "12345678901234567890";
+        if(info_hash.length == 0){
+            info_hash = "12345678901234567890".getBytes();
         }
-        for(char s: info_hash.toCharArray()){
-            handshakeInfo[i] = (byte)s;
+        for(byte s: info_hash){
+            handshakeInfo[i] = s;
             i++;
         }
-        if(peer_id.isEmpty()){
-            peer_id = "12345678901234567890";
+        if(peer_id.length == 0){
+            peer_id = "12345678901234567890".getBytes();
         }
-        for(char s: peer_id.toCharArray()){
-            handshakeInfo[i] = (byte)s;
+        for(byte s: peer_id){
+            handshakeInfo[i] = s;
             i++;
         }
     }
