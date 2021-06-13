@@ -69,7 +69,7 @@ public class CreateTorrent {
         return pieces.toByteArray();
     }
     public static void createTorrent(File file, File sharedFile, String announceURL) throws IOException {
-        final int pieceLength = 256;
+        final int pieceLength = 128;
         Map<String,Object> info = new HashMap<String,Object>();
         info.put("name", sharedFile.getName());
         info.put("length", sharedFile.length());
